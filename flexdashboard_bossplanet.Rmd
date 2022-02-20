@@ -193,8 +193,8 @@ gg <- ggplot(DT, aes(x = xcoord, y = ycoord, color = price_rank, customdata = li
   labs(color = "Price", x = "", y = "") +
   theme(panel.grid.minor = element_blank(),
         panel.grid.major = element_line(colour = "grey80"),
-        panel.background = element_rect(fill='transparent')) +
-  coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180), expand = TRUE)
+        panel.background = element_rect(fill='transparent'))
+  # coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180), expand = TRUE)
 
 ggplotly(gg, tooltip = "text") %>% 
   layout(legend = list(x = .025, y = .97, bgcolor = 'rgba(255,255,255,0.6)')) %>%
@@ -227,11 +227,11 @@ gg <- ggplot(DTS, aes(x = xcoord, y = ycoord, color = price_rank, alpha = sold_t
   labs(color = "Price", x = "", y = "", alpha = "Sold time") +
   theme(panel.grid.minor = element_blank(),
         panel.grid.major = element_line(colour = "grey80"),
-        panel.background = element_rect(fill='transparent')) +
-  coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180), expand = TRUE)
+        panel.background = element_rect(fill='transparent'))
+  # coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180), expand = TRUE)
 
 ggplotly(gg, tooltip = "text") %>% 
-  layout(legend = list(x = .025, y = .97, bgcolor = 'rgba(255,255,255,0.6)'))
+  layout(legend = list(x = 1, y = .3, bgcolor = 'rgba(255,255,255,0.6)'))
 ```
 
 
