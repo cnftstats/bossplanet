@@ -10,7 +10,8 @@ library(httr)
 # Variables ----------------------------------------------------------------------------------------
 link <- "https://cardano-mainnet.blockfrost.io/api/v0/assets/"
 token <- sample(c("mainnetghJieJ39JMUlumgj2HwbxtNmEcY3WzC9",
-                  "mainnetYBrF03aUZhsJaexjOO6z7pI6vuNxW0sv"), 1)
+                  "mainnetYBrF03aUZhsJaexjOO6z7pI6vuNxW0sv",
+                  "mainnetvPXz1w2LMEpWQ8VdU5U9TBRsCuuwmh0g"), 1)
 policy_id <- "5a2cdc6e3aa9612fe4676672f443e7efd39c309d45e7919a4bf27750"
 project <- "Boss Planet Real Estate"
 time_now <- as_datetime(now())
