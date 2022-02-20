@@ -60,16 +60,16 @@ $(document).ready(function(){
 
 # Sidebar {data-width=80, .sidebar}
 <ul id="sidebar_ul">
-  <li><a href="https://cnftstats.github.io/adapes">Adapes</a></li>
-  <li><a href="https://cnftstats.github.io/bcrc">BCRC</a></li>
-  <li><a href="https://cnftstats.github.io/borgs">BorgsClub</a></li>
-  <li id="currentProject"><a href="https://cnftstats.github.io/bossplanet">BossPlanet</a></li>
-  <li><a href="https://cnftstats.github.io/chilledkongs">ChilledKongs</a></li>
-  <li><a href="https://cnftstats.github.io/claynation">Clay Nation</a></li>
-  <li><a href="https://cnftstats.github.io/discosolaris">DiscoSolaris</a></li>
-  <li><a href="https://cnftstats.github.io/mocossi">Mocossi</a></li>
-  <li><a href="https://cnftstats.github.io/pavia">Pavia</a></li>
-  <li><a href="https://cnftstats.github.io/spacebudz">SpaceBudz</a></li>
+<li><a href="https://cnftstats.github.io/adapes">Adapes</a></li>
+<li><a href="https://cnftstats.github.io/bcrc">BCRC</a></li>
+<li><a href="https://cnftstats.github.io/borgs">BorgsClub</a></li>
+<li id="currentProject"><a href="https://cnftstats.github.io/bossplanet">BossPlanet</a></li>
+<li><a href="https://cnftstats.github.io/chilledkongs">ChilledKongs</a></li>
+<li><a href="https://cnftstats.github.io/claynation">Clay Nation</a></li>
+<li><a href="https://cnftstats.github.io/discosolaris">DiscoSolaris</a></li>
+<li><a href="https://cnftstats.github.io/mocossi">Mocossi</a></li>
+<li><a href="https://cnftstats.github.io/pavia">Pavia</a></li>
+<li><a href="https://cnftstats.github.io/spacebudz">SpaceBudz</a></li>
 </ul>
 
 # Floor {data-icon="ion-arrow-graph-up-right"}
@@ -189,21 +189,21 @@ gg <- ggplot(DT, aes(x = xcoord, y = ycoord, color = price_rank, customdata = li
                                    "</br></br>", paste("Price:", price,
                                                        "</br>District:", district,
                                                        "</br>Type:", type,
-                                                       "</br>Last offer:", last_offer,
                                                        "</br>Market:", market)))) + 
-  geom_point(size = .3) +
-  scale_color_gradient(low = 'steelblue3', high = 'firebrick3', 
+  geom_point(aes(shape = type), size = .4) +
+  scale_color_gradient2(low = 'steelblue3', mid = "goldenrod1", midpoint = .5, high = 'red', 
                        breaks = 0:1, labels = c("Lowest", "Highest"), limits = 0:1) +
   scale_x_continuous(breaks = c(-180, -60, +60, +180)) +
   scale_y_continuous(breaks = c(-180, -60, +60, +180)) +
+  scale_shape_manual(values = c("listing" = 16, "bundle" = 17)) +
   labs(color = "Price", x = "", y = "") +
   theme(panel.grid.minor = element_blank(),
         panel.grid.major = element_line(colour = "grey80"),
         panel.background = element_rect(fill='transparent'))
-  # coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180), expand = TRUE)
+# coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180), expand = TRUE)
 
 ggplotly(gg, tooltip = "text") %>% 
-  layout(legend = list(x = .025, y = .97, bgcolor = 'rgba(255,255,255,0.6)')) %>%
+  layout(legend = list(x = 1, y = .3, bgcolor = 'rgba(255,255,255,0.6)')) %>%
   onRender(js)
 ```
 
@@ -223,7 +223,7 @@ gg <- ggplot(DTS, aes(x = xcoord, y = ycoord, color = price_rank, alpha = sold_t
                                                         "</br>Sold time:", sold_time,
                                                         "</br>Market:", market)))) + 
   geom_point(size = .3) +
-  scale_color_gradient(low = 'steelblue3', high = 'firebrick3', 
+  scale_color_gradient2(low = 'steelblue3', mid = "goldenrod1", midpoint = .5, high = 'red', 
                        breaks = 0:1, labels = c("Lowest", "Highest"), limits = 0:1) +
   scale_x_continuous(breaks = c(-180, -60, +60, +180)) +
   scale_y_continuous(breaks = c(-180, -60, +60, +180)) +
@@ -234,7 +234,7 @@ gg <- ggplot(DTS, aes(x = xcoord, y = ycoord, color = price_rank, alpha = sold_t
   theme(panel.grid.minor = element_blank(),
         panel.grid.major = element_line(colour = "grey80"),
         panel.background = element_rect(fill='transparent'))
-  # coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180), expand = TRUE)
+# coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180), expand = TRUE)
 
 ggplotly(gg, tooltip = "text") %>% 
   layout(legend = list(x = 1, y = .3, bgcolor = 'rgba(255,255,255,0.6)'))
