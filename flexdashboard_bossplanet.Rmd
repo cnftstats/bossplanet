@@ -75,7 +75,7 @@ $(document).ready(function(){
 # Floor {data-icon="ion-arrow-graph-up-right"}
 ## Column 1 {data-width=650, .tabset}
 ### Listings
-```{r, fig.width=9, fig.height=7}
+```{r fig.height=7, fig.width=10}
 X <- copy(DT[type != "bundle"])
 X[price %between% c(0, 2499), price_range := trunc(price/300)*300]
 X[price >= 2500, price_range := 2500]
@@ -119,8 +119,9 @@ X <- copy(DTS[type != "bundle"])
 X[price %between% c(0, 2499), price_range := trunc(price/300)*300]
 X[price >= 2500, price_range := 2500]
 X <- X[complete.cases(price_range), .(price_range, price, market, district_txt)]
-CAP <- X[, .(floor = min(price), listings = .N), district_txt][order(district_txt)]
-.caption <- paste0(CAP[, sprintf("%s: Sale floor = %s | Sales = %d", district_txt, floor, listings)],
+CAP <- X[, .(floor = min(price), roof = max(price), sales = .N), district_txt][order(district_txt)]
+.caption <- paste0(CAP[, sprintf("%s: Sale floor = %s | Sale roof = %d | Sales = %d",
+                                 district_txt, floor, roof, sales)],
                    collapse = "\n")
 X <- X[, .N, .(price_range, market, district_txt)][order(price_range)]
 X[price_range %between% c(0, 2499), x_label := paste0(price_range, "-", price_range + (300-1))]
@@ -136,7 +137,7 @@ ggplot(X, aes(x_label, N, fill = market)) +
             color = "steelblue4", size = 3) +
   scale_fill_manual(values = c("jpg.store" = "springgreen3", "cnft.io" = "springgreen4")) +
   scale_alpha_manual(values = 0.9, guide = "none") +
-  labs(x = "Price range", y = "Number of listings", fill = "", caption = .caption) +
+  labs(x = "Price range", y = "Number of sales", fill = "", caption = .caption) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = -45, vjust = +.5, hjust = 0,
                                    color = "grey50", size = 8),
