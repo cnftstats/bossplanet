@@ -77,15 +77,17 @@ $(document).ready(function(){
 ### Listings
 ```{r fig.height=7, fig.width=10}
 X <- copy(DT[type != "bundle"])
-X[price %between% c(0, 2499), price_range := trunc(price/300)*300]
-X[price >= 2500, price_range := 2500]
+X[price %between% c(0, 999), price_range := trunc(price/100)*100]
+X[price %between% c(1000, 4999), price_range := trunc(price/1000)*1000]
+X[price >= 5000, price_range := 5000]
 X <- X[complete.cases(price_range), .(price_range, price, market, district_txt)]
 CAP <- X[, .(floor = min(price), listings = .N), district_txt][order(district_txt)]
 .caption <- paste0(CAP[, sprintf("%s: Floor = %s | Listings = %d", district_txt, floor, listings)],
                    collapse = "\n")
 X <- X[, .N, .(price_range, market, district_txt)][order(price_range)]
-X[price_range %between% c(0, 2499),  x_label := paste0(price_range, "-", price_range + (300-1))]
-X[price_range >= 2500,               x_label := "2500+"]
+X[price_range %between% c(0, 999),  x_label := paste0(price_range, "-", price_range + (100-1))]
+X[price_range %between% c(1000, 4999),  x_label := paste0(price_range, "-", price_range + (1000-1))]
+X[price_range >= 5000,               x_label := "5000+"]
 .X <- X[, .(price_range, x_label)] %>% unique %>% .[order(price_range)]
 X[, x_label := factor(x_label, levels = .X$x_label)]
 X[, market  := factor(market, levels = c("jpg.store", "cnft.io"))]
@@ -108,7 +110,8 @@ ggplot(X, aes(x_label, N, fill = market)) +
         legend.key.height = unit(0.5, "points"), legend.key.width = unit(10, "points"),
         legend.box.spacing = unit(-10, "points"),
         plot.caption = element_text(color = "#008B8B", vjust = +15, hjust = 0, size = 8),
-        plot.margin = unit(c(0, 15, 0, 0), units = "pt"))
+        plot.margin = unit(c(0, 15, 0, 0), units = "pt"),
+        panel.grid.minor = element_blank())
 ```
 
 > Warning: `Bundles` (multiple assets listed together) are excluded!
@@ -116,16 +119,18 @@ ggplot(X, aes(x_label, N, fill = market)) +
 ### Sales (last 72h)
 ```{r fig.height=7, fig.width=10}
 X <- copy(DTS[type != "bundle"])
-X[price %between% c(0, 2499), price_range := trunc(price/300)*300]
-X[price >= 2500, price_range := 2500]
+X[price %between% c(0, 999), price_range := trunc(price/100)*100]
+X[price %between% c(1000, 4999), price_range := trunc(price/1000)*1000]
+X[price >= 5000, price_range := 5000]
 X <- X[complete.cases(price_range), .(price_range, price, market, district_txt)]
 CAP <- X[, .(floor = min(price), roof = max(price), sales = .N), district_txt][order(district_txt)]
 .caption <- paste0(CAP[, sprintf("%s: Sale floor = %s | Sale roof = %d | Sales = %d",
                                  district_txt, floor, roof, sales)],
                    collapse = "\n")
 X <- X[, .N, .(price_range, market, district_txt)][order(price_range)]
-X[price_range %between% c(0, 2499), x_label := paste0(price_range, "-", price_range + (300-1))]
-X[price_range >= 2500,              x_label := "2500+"]
+X[price_range %between% c(0, 999),  x_label := paste0(price_range, "-", price_range + (100-1))]
+X[price_range %between% c(1000, 4999),  x_label := paste0(price_range, "-", price_range + (1000-1))]
+X[price_range >= 5000,               x_label := "5000+"]
 .X <- X[, .(price_range, x_label)] %>% unique %>% .[order(price_range)]
 X[, x_label := factor(x_label, levels = .X$x_label)]
 X[, market  := factor(market, levels = c("jpg.store", "cnft.io"))]
@@ -148,7 +153,8 @@ ggplot(X, aes(x_label, N, fill = market)) +
         legend.key.height = unit(0.5, "points"), legend.key.width = unit(10, "points"),
         legend.box.spacing = unit(-10, "points"),
         plot.caption = element_text(color = "#008B8B", vjust = +15, hjust = 0, size = 8),
-        plot.margin = unit(c(0, 15, 0, 0), units = "pt"))
+        plot.margin = unit(c(0, 15, 0, 0), units = "pt"),
+        panel.grid.minor = element_blank())
 ```
 
 > Warning: Only last 72h sales are included. `Bundles` (multiple assets sold together) are excluded!
