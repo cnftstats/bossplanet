@@ -280,26 +280,27 @@ ggplotly(gg, tooltip = "text") %>%
 
 > Click on the data points to open the listings. Click and drag your mouse to zoom.
 
-<!-- ### Minted -->
-<!-- ```{r fig.height=10} -->
-<!-- CAP <- RAR[, .(minted = .N), district] -->
-<!-- CAP <- CAP[, sprintf("District %s = %d lands", district, minted)] -->
-<!-- CAP <- paste0(CAP, collapse = "\n") -->
-<!-- CAP <- paste0("Total = ", nrow(RAR), " lands\n", CAP) -->
+### Minted
+```{r fig.height=10}
+CAP <- RAR[, .(minted = .N, percent = sprintf("%05.02f%%", .N/nrow(RAR)*100)), district]
+CAP <- CAP[, sprintf("District %s = %d (%s) lands", district, minted, percent)]
+CAP <- paste0(CAP, collapse = "\n")
+CAP <- paste0("Total = ", nrow(RAR), " lands (100%)\n", CAP)
+cat(CAP)
 
-<!-- gg <- ggplot(RAR, aes(x = xcoord, y = ycoord)) + -->
-<!--   geom_point(color = "grey60", size = .3) + -->
-<!--   scale_x_continuous(breaks = c(-180, -60, +60, +180)) + -->
-<!--   scale_y_continuous(breaks = c(-180, -60, +60, +180)) + -->
-<!--   labs(x = "", y = "", title = "Boss Planet minted lands", subtitle = CAP) + -->
-<!--   theme(panel.grid.minor = element_blank(), -->
-<!--         panel.grid.major = element_line(colour = "grey80"), -->
-<!--         panel.background = element_rect(fill = 'transparent'), -->
-<!--         plot.title = element_text(color = "firebrick4", size = 15), -->
-<!--         plot.subtitle = element_text(color = "steelblue3", size = 12)) + -->
-<!--   coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180), expand = TRUE) -->
-<!-- gg -->
-<!-- ``` -->
+
+# ggplot(RAR, aes(x = xcoord, y = ycoord)) +
+#   geom_point(color = "grey60", size = .3) +
+#   scale_x_continuous(breaks = c(-180, -60, +60, +180), expand = c(0.01, 0.01)) +
+#   scale_y_continuous(breaks = c(-180, -60, +60, +180), expand = c(0.01, 0.01)) +
+#   labs(x = "", y = "", title = "Boss Planet minted lands", subtitle = CAP) +
+#   theme(panel.grid.minor = element_blank(),
+#         panel.grid.major = element_line(colour = "grey80"),
+#         panel.background = element_rect(fill = 'transparent'),
+#         plot.title = element_text(color = "firebrick4", size = 15),
+#         plot.subtitle = element_text(color = "steelblue3", size = 12)) +
+#   coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180), expand = TRUE)
+```
 
 # Support this project {data-icon="ion-heart"}
 ## Column 1
