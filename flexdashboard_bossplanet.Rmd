@@ -187,15 +187,20 @@ datatable(X, class = 'compact stripe hover nowrap',
 ## Column 1 {data-width=500, .tabset}
 ### Listings
 ```{r}
-gg <- ggplot(DT, aes(x = xcoord, y = ycoord, color = price_rank, customdata = link,
-                     text = paste0(asset,
-                                   "</br></br>", paste("Price:", price,
-                                                       "</br>District:", district,
-                                                       "</br>Type:", type,
-                                                       "</br>Market:", market)))) + 
-  geom_point(aes(shape = type), size = .4) +
-  scale_color_gradient2(low = 'steelblue3', mid = "goldenrod1", midpoint = .5, high = 'red', 
-                       breaks = 0:1, labels = c("Lowest", "Highest"), limits = 0:1) +
+XRAR <- RAR[!asset %in% DT$asset]
+
+gg <- ggplot() +
+  geom_point(data = XRAR, aes(x = xcoord, y = ycoord), color = "grey90", alpha = .9, size = .3) +
+  geom_point(data = DT, 
+             aes(x = xcoord, y = ycoord, color = price_rank, shape = type, customdata = link,
+                 text = paste0(asset,
+                               "</br></br>", paste("Price:", price,
+                                                   "</br>District:", district,
+                                                   "</br>Type:", type,
+                                                   "</br>Market:", market))), size = .3) +
+  scale_color_gradient2(low = 'steelblue3', mid = "goldenrod1", midpoint = .5, high = 'red',
+                        na.value = "grey90",
+                        breaks = 0:1, labels = c("Lowest", "Highest"), limits = 0:1) +
   scale_x_continuous(breaks = c(-180, -60, +60, +180)) +
   scale_y_continuous(breaks = c(-180, -60, +60, +180)) +
   scale_shape_manual(values = c("listing" = 16, "bundle" = 17)) +
@@ -205,12 +210,13 @@ gg <- ggplot(DT, aes(x = xcoord, y = ycoord, color = price_rank, customdata = li
         panel.background = element_rect(fill = 'transparent'))
 # coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180), expand = TRUE)
 
-ggplotly(gg, tooltip = "text") %>% 
+ggplotly(gg, tooltip = "text") %>%
   layout(legend = list(x = 1, y = .3, bgcolor = 'rgba(255,255,255,0.6)')) %>%
   onRender(js)
 ```
 
 > Click on the data points to open the listings. Click and drag your mouse to zoom.
+
 
 ### Sales (last 72h)
 ```{r}
@@ -218,96 +224,53 @@ DTS[, sold_time := trunc(sold_at_days)]
 DTS[, sold_time := fcase(trunc(sold_at_days) == 0, "0-24h ago",
                          trunc(sold_at_days) == 1, "24-48h ago",
                          trunc(sold_at_days) == 2, "48-72h ago")]
-gg <- ggplot(DTS, aes(x = xcoord, y = ycoord, color = price_rank, alpha = sold_time,
-                      text = paste0(asset,
+XRAR <- RAR[!asset %in% DTS$asset]
+gg <- ggplot() +
+  geom_point(data = XRAR, aes(x = xcoord, y = ycoord), color = "grey90", alpha = .9, size = .3) +
+  geom_point(data = DTS, 
+             aes(x = xcoord, y = ycoord, color = price_rank,
+                 text = paste0(asset,
                                     "</br></br>", paste("Price:", price,
                                                         "</br>District:", district,
                                                         "</br>Type:", type,
                                                         "</br>Sold time:", sold_time,
-                                                        "</br>Market:", market)))) + 
-  geom_point(size = .3) +
-  scale_color_gradient2(low = 'steelblue3', mid = "goldenrod1", midpoint = .5, high = 'red', 
-                       breaks = 0:1, labels = c("Lowest", "Highest"), limits = 0:1) +
+                                                        "</br>Market:", market))), size = .3) +
+  scale_color_gradient2(low = 'steelblue3', mid = "goldenrod1", midpoint = .5, high = 'red',
+                        na.value = "grey90",
+                        breaks = 0:1, labels = c("Lowest", "Highest"), limits = 0:1) +
   scale_x_continuous(breaks = c(-180, -60, +60, +180)) +
   scale_y_continuous(breaks = c(-180, -60, +60, +180)) +
-  scale_alpha_manual(values = c("0-24h ago"  = 1,
-                                "24-48h ago" = 1,
-                                "48-72h ago" = 1)) +
-  labs(color = "Price", x = "", y = "", alpha = "Sold time") +
+  labs(color = "Price", x = "", y = "") +
   theme(panel.grid.minor = element_blank(),
         panel.grid.major = element_line(colour = "grey80"),
         panel.background = element_rect(fill = 'transparent'))
 # coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180), expand = TRUE)
 
-ggplotly(gg, tooltip = "text") %>% 
-  layout(legend = list(x = 1, y = .3, bgcolor = 'rgba(255,255,255,0.6)'))
+ggplotly(gg, tooltip = "text") %>%
+  onRender(js)
 ```
 
-### Minted
-```{r fig.height=10}
-CAP <- RAR[, .(minted = .N), district]
-CAP <- CAP[, sprintf("District %s = %d lands", district, minted)]
-CAP <- paste0(CAP, collapse = "\n")
-CAP <- paste0("Total = ", nrow(RAR), " lands\n", CAP)
+> Click on the data points to open the listings. Click and drag your mouse to zoom.
 
-gg <- ggplot(RAR, aes(x = xcoord, y = ycoord)) +
-  geom_point(color = "grey60", size = .3) +
-  scale_x_continuous(breaks = c(-180, -60, +60, +180)) +
-  scale_y_continuous(breaks = c(-180, -60, +60, +180)) +
-  labs(x = "", y = "", title = "Boss Planet minted lands", subtitle = CAP) +
-  theme(panel.grid.minor = element_blank(),
-        panel.grid.major = element_line(colour = "grey80"),
-        panel.background = element_rect(fill = 'transparent'),
-        plot.title = element_text(color = "firebrick4", size = 15),
-        plot.subtitle = element_text(color = "steelblue3", size = 12)) +
-coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180), expand = TRUE)
-gg
-```
+<!-- ### Minted -->
+<!-- ```{r fig.height=10} -->
+<!-- CAP <- RAR[, .(minted = .N), district] -->
+<!-- CAP <- CAP[, sprintf("District %s = %d lands", district, minted)] -->
+<!-- CAP <- paste0(CAP, collapse = "\n") -->
+<!-- CAP <- paste0("Total = ", nrow(RAR), " lands\n", CAP) -->
 
-<!-- ### Listings2 -->
-<!-- ```{r} -->
-<!-- # library(raster) -->
-<!-- # Z <- as.matrix(rasterFromXYZ(DT[, .(xcoord, ycoord, price_rank)])) -->
-<!-- # Z <- apply(Z, 2, rev) -->
-<!-- # TXT <- as.matrix(rasterFromXYZ(DT[, .(xcoord, ycoord, as.character(price))])) -->
-<!-- # TXT <- apply(TXT, 2, rev) -->
-<!-- # plot_ly(x = min(DT$xcoord):max(DT$xcoord), -->
-<!-- #         y = min(DT$ycoord):max(DT$ycoord), -->
-<!-- #         z = Z, -->
-<!-- #         type = "heatmap", -->
-<!-- #         hoverinfo = "text", -->
-<!-- #         text = TXT, -->
-<!-- #         xgap = .7, -->
-<!-- #         ygap = .7, -->
-<!-- #         customdata = TXT) %>%  -->
-<!-- #   layout(hovermode = 'closest', -->
-<!-- #          scene = list(xaxis = list(title = "A", range = c(-180, 180)), -->
-<!-- #            yaxis = list(title = "B", range = c(-180, 180)))) %>%  -->
-<!-- #   onRender(js) -->
-
-
-<!-- # gg <- ggplot(DT, aes(x = xcoord, y = ycoord, fill = price_rank, customdata = link, -->
-<!-- #                text = paste0(asset, -->
-<!-- #                              "</br></br>", paste("Price:", price, -->
-<!-- #                                                  "</br>District:", district, -->
-<!-- #                                                  "</br>Type:", type, -->
-<!-- #                                                  "</br>Last offer:", last_offer, -->
-<!-- #                                                  "</br>Market:", market)))) +  -->
-<!-- #   geom_tile() + -->
-<!-- #   scale_color_gradient(low = 'blue', high = 'red',  -->
-<!-- #                        breaks = 0:1, labels = c("Lowest", "Highest"), limits = 0:1) + -->
-<!-- #   scale_x_continuous(breaks = c(-180, -60, +60, +180)) + -->
-<!-- #   scale_y_continuous(breaks = c(-180, -60, +60, +180)) + -->
-<!-- #   labs(fill = "Price", x = "", y = "") + -->
-<!-- #   theme(panel.grid.minor = element_blank(), -->
-<!-- #         panel.grid.major = element_line(colour = "grey80")) + -->
-<!-- #   coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180), expand = TRUE) -->
-<!-- #  -->
-<!-- #  -->
-<!-- # ggplotly(gg, tooltip = "text") %>%  -->
-<!-- #   layout(legend = list(x = .025, y = .97, bgcolor = 'rgba(255,255,255,0.6)')) %>% -->
-<!-- #   onRender(js) -->
-
+<!-- gg <- ggplot(RAR, aes(x = xcoord, y = ycoord)) + -->
+<!--   geom_point(color = "grey60", size = .3) + -->
+<!--   scale_x_continuous(breaks = c(-180, -60, +60, +180)) + -->
+<!--   scale_y_continuous(breaks = c(-180, -60, +60, +180)) + -->
+<!--   labs(x = "", y = "", title = "Boss Planet minted lands", subtitle = CAP) + -->
+<!--   theme(panel.grid.minor = element_blank(), -->
+<!--         panel.grid.major = element_line(colour = "grey80"), -->
+<!--         panel.background = element_rect(fill = 'transparent'), -->
+<!--         plot.title = element_text(color = "firebrick4", size = 15), -->
+<!--         plot.subtitle = element_text(color = "steelblue3", size = 12)) + -->
+<!--   coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180), expand = TRUE) -->
+<!-- gg -->
 <!-- ``` -->
 
 # Support this project {data-icon="ion-heart"}
