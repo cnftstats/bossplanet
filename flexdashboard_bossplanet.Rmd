@@ -25,10 +25,13 @@ library(ggplot2)
 library(svglite)
 library(plotly)
 library(DT)
+
 # Data
 DT <- readRDS("data/DT.rds")
 DTS <- readRDS("data/DTS.rds")
 DTE <- readRDS("data/DTE.rds")
+RAR <- readRDS("data/RAR.rds")
+
 # javascript (clickable datapoints url)
 # https://stackoverflow.com/questions/51681079/how-to-make-scatterplot-points-open-a-hyperlink-using-ggplotly-r
 js <- "function(el, x) {
@@ -199,7 +202,7 @@ gg <- ggplot(DT, aes(x = xcoord, y = ycoord, color = price_rank, customdata = li
   labs(color = "Price", x = "", y = "") +
   theme(panel.grid.minor = element_blank(),
         panel.grid.major = element_line(colour = "grey80"),
-        panel.background = element_rect(fill='transparent'))
+        panel.background = element_rect(fill = 'transparent'))
 # coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180), expand = TRUE)
 
 ggplotly(gg, tooltip = "text") %>% 
@@ -233,13 +236,33 @@ gg <- ggplot(DTS, aes(x = xcoord, y = ycoord, color = price_rank, alpha = sold_t
   labs(color = "Price", x = "", y = "", alpha = "Sold time") +
   theme(panel.grid.minor = element_blank(),
         panel.grid.major = element_line(colour = "grey80"),
-        panel.background = element_rect(fill='transparent'))
+        panel.background = element_rect(fill = 'transparent'))
 # coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180), expand = TRUE)
 
 ggplotly(gg, tooltip = "text") %>% 
   layout(legend = list(x = 1, y = .3, bgcolor = 'rgba(255,255,255,0.6)'))
 ```
 
+### Minted
+```{r fig.height=10}
+CAP <- RAR[, .(minted = .N), district]
+CAP <- CAP[, sprintf("District %s = %d lands", district, minted)]
+CAP <- paste0(CAP, collapse = "\n")
+CAP <- paste0("Total = ", nrow(RAR), " lands\n", CAP)
+
+gg <- ggplot(RAR, aes(x = xcoord, y = ycoord)) +
+  geom_point(color = "grey60", size = .3) +
+  scale_x_continuous(breaks = c(-180, -60, +60, +180)) +
+  scale_y_continuous(breaks = c(-180, -60, +60, +180)) +
+  labs(x = "", y = "", title = "Boos Planet minted lands", subtitle = CAP) +
+  theme(panel.grid.minor = element_blank(),
+        panel.grid.major = element_line(colour = "grey80"),
+        panel.background = element_rect(fill = 'transparent'),
+        plot.title = element_text(color = "firebrick4", size = 15),
+        plot.subtitle = element_text(color = "steelblue3", size = 12)) +
+coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180), expand = TRUE)
+gg
+```
 
 <!-- ### Listings2 -->
 <!-- ```{r} -->
