@@ -226,11 +226,11 @@ ggplotly(gg, tooltip = "text") %>%
            opacity = 1,
            layer = "below"
          ))) %>%
+  config(scrollZoom = TRUE) %>% 
   onRender(js)
 ```
 
-> Click on the data points to open the listings. Click and drag your mouse to zoom.
-
+> Click on the data points to open the listings. Click and drag your mouse to zoom. <span style="color:#CD2626">You can zoom-in/out with your mouse wheel!</span> Grey areas are minted lands. I have no clue what the white areas are.
 
 ### Sales (last 72h)
 ```{r}
@@ -275,10 +275,11 @@ ggplotly(gg, tooltip = "text") %>%
            opacity = 1,
            layer = "below"
          ))) %>%
+  config(scrollZoom = TRUE) %>%
   onRender(js)
 ```
 
-> Click on the data points to open the listings. Click and drag your mouse to zoom.
+> Click and drag your mouse to zoom. <span style="color:#CD2626">You can zoom-in/out with your mouse wheel!</span> Grey areas are minted lands. I have no clue what the white areas are.
 
 ### Minted
 ```{r fig.height=10}
