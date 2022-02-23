@@ -117,7 +117,7 @@ ggplot(X, aes(x_label, N, fill = market)) +
         panel.grid.minor = element_blank())
 ```
 
-> Warning: `Bundles` (multiple assets listed together) are excluded!
+> Warning: `Bundles` (multiple assets listed together) are excluded! <span style="color:#CD2626">CNFT.io data is not being taken into account right now because of an issue! Working on a fix...</span>
 
 ### Sales (last 72h)
 ```{r fig.height=7, fig.width=10}
@@ -160,7 +160,7 @@ ggplot(X, aes(x_label, N, fill = market)) +
         panel.grid.minor = element_blank())
 ```
 
-> Warning: Only last 72h sales are included. `Bundles` (multiple assets sold together) are excluded!
+> Warning: Only last 72h sales are included. `Bundles` (multiple assets sold together) are excluded! <span style="color:#CD2626">CNFT.io data is not being taken into account right now because of an issue! Working on a fix...</span>
 
 ## Column 2 {data-width=350}
 ### Sweep that floor: Lowest listings
@@ -185,6 +185,37 @@ datatable(X, class = 'compact stripe hover nowrap',
 
 # Map {data-icon="ion-android-map"}
 ## Column 1 {data-width=500, .tabset}
+
+<!-- ### Tiles -->
+<!-- ```{r} -->
+<!-- # XRAR <- RAR[!asset %in% DT$asset] -->
+<!-- map_background <- paste0("https://raw.githubusercontent.com/cnftstats/bossplanet/", -->
+<!--                          "main/map_background.png?raw=true") -->
+
+
+<!-- X <- data.table(expand.grid(x = -180:180, y = -180:180), price_rank = NA) -->
+<!-- X[, xy := paste(x, y, sep = ",")] -->
+<!-- setnames(X, c("x", "y"), c("xcoord", "ycoord")) -->
+
+<!-- DT[, xy := paste(xcoord, ycoord, sep = ",")] -->
+
+<!-- loj(X, DT[, .(xcoord, ycoord, price_rank, xy)]) -->
+
+<!-- ggplot(DT) + -->
+<!--   geom_tile(aes(xcoord, ycoord, fill = price_rank)) + -->
+<!--   scale_x_continuous(breaks = c(-180, -60, +60, +180), expand = c(0.01, 0.01)) + -->
+<!--   scale_y_continuous(breaks = c(-180, -60, +60, +180), expand = c(0.01, 0.01)) + -->
+<!--   labs(color = "Price", x = "", y = "") + -->
+<!--   theme(panel.grid.minor = element_blank(), -->
+<!--         panel.grid.major = element_line(colour = "grey80"), -->
+<!--         panel.background = element_rect(fill = 'transparent')) -->
+
+<!-- ggplotly(gg) %>% config(scrollZoom = TRUE) -->
+
+
+<!-- ``` -->
+
+
 ### Listings
 ```{r}
 # XRAR <- RAR[!asset %in% DT$asset]
@@ -230,7 +261,7 @@ ggplotly(gg, tooltip = "text") %>%
   onRender(js)
 ```
 
-> Click on the data points to open the listings. Click and drag your mouse to zoom. <span style="color:#CD2626">You can zoom-in/out with your mouse wheel!</span> Grey areas are minted lands. I have no clue what the white areas are.
+> Click on the data points to open the listings. Click and drag your mouse to zoom. You can zoom-in/out with your mouse wheel! Grey areas are minted lands. I have no clue what the white areas are. <span style="color:#CD2626">CNFT.io data is not being taken into account right now because of an issue! Working on a fix...</span>
 
 ### Sales (last 72h)
 ```{r}
@@ -279,7 +310,7 @@ ggplotly(gg, tooltip = "text") %>%
   onRender(js)
 ```
 
-> Click and drag your mouse to zoom. <span style="color:#CD2626">You can zoom-in/out with your mouse wheel!</span> Grey areas are minted lands. I have no clue what the white areas are.
+> Click and drag your mouse to zoom. You can zoom-in/out with your mouse wheel. Grey areas are minted lands. I have no clue what the white areas are. <span style="color:#CD2626">CNFT.io data is not being taken into account right now because of an issue! Working on a fix...</span>
 
 ### Minted
 ```{r fig.height=10}

@@ -68,84 +68,84 @@ get_asset_data <- function(asset_id, blockforst_link = link, blockforst_token = 
 }
 
 
-# CNFT listings ------------------------------------------------------------------------------------
-api_link_cnft <- "https://api.cnft.io/market/listings"
-
-.CNFT <- query_n(api_link_cnft, project, sold = FALSE) |>
-  lapply(data.table) |> rbindlist(fill = TRUE)
-
-.CNFT[, link := paste0("https://cnft.io/token/", `_id`)]
-
-# Initialize data.table
-CNFT <- data.table(asset = NA, type = NA, price = NA,
-                   last_offer = NA, sc = NA, market = NA, link = NA)
-
-for (i in 1:nrow(.CNFT)) {
-  CNFT <- rbindlist(list(CNFT, data.table(
-    asset          = .CNFT[i, assets[[1]]$metadata$name],
-    type           = .CNFT[i, type],
-    price          = .CNFT[i, price/length(assets[[1]]$metadata$name)],
-    last_offer     = .CNFT[i, offers],
-    sc             = .CNFT[i, smartContractTxid],
-    market         = "cnft.io",
-    link           = .CNFT[i, link],
-    district       = .CNFT[i, assets[[1]]$metadata$District]
-  )), fill = TRUE)
-}
-
-CNFT <- CNFT[2:nrow(CNFT)] # Clear first row from initialization
-CNFT[, price        := price/10**6]
-CNFT[, sc           := ifelse(is.na(sc), "no", "yes")]
-
-for (i in 1:nrow(CNFT)) {
-  .offers <- CNFT[i, last_offer[[1]]]
-  if (nrow(.offers) == 0) {
-    CNFT[i, last_offer := NA]
-  } else {
-    CNFT[i, last_offer := max(.offers$offer/10**6)]
-  }
-}
-
-CNFT[, xcoord := extract_num(strsplit(asset, ",")[[1]][1]), 1:nrow(CNFT)]
-CNFT[, ycoord := extract_num(strsplit(asset, ",")[[1]][2]), 1:nrow(CNFT)]
-
-
-# CNFT sales ---------------------------------------------------------------------------------------
-.CNFTS <- query_n(api_link_cnft, project, sold = TRUE, n = 11) |>
-  lapply(data.table) |> rbindlist(fill = TRUE)
-
-.CNFTS <- .CNFTS[!is.na(soldAt)]
-
-if(nrow(.CNFTS) != 0) {
-  # Initialize data.table
-  CNFTS <- data.table(asset = NA, price = NA, market = NA, sold_at = NA)
-  
-  for (i in 1:nrow(.CNFTS)) {
-    CNFTS <- rbindlist(list(CNFTS, data.table(
-      asset          = .CNFTS[i, assets[[1]]$metadata$name],
-      type           = .CNFTS[i, type],
-      price          = .CNFTS[i, price/length(assets[[1]]$metadata$name)],
-      market         = "cnft.io",
-      sold_at        = .CNFTS[i, soldAt],
-      district       = .CNFT[i, assets[[1]]$metadata$District]
-    )), fill = TRUE)
-  }
-  
-  CNFTS <- CNFTS[2:nrow(CNFTS)] # Clear first row from initialization
-  CNFTS[, price         := price/10**6]
-  CNFTS[, market        := "cnft.io"]
-  CNFTS[, sold_at       := as_datetime(sold_at)]
-  CNFTS[, sold_at_hours := difftime(time_now, sold_at, units = "hours")]
-  CNFTS[, sold_at_days  := difftime(time_now, sold_at, units = "days")]
-  CNFTS[, xcoord := extract_num(strsplit(asset, ",")[[1]][1]), 1:nrow(CNFTS)]
-  CNFTS[, ycoord := extract_num(strsplit(asset, ",")[[1]][2]), 1:nrow(CNFTS)]
-  
-  CNFTS <- CNFTS[order(-sold_at), .(asset, type, price, district, 
-                                    sold_at, sold_at_hours, sold_at_days, market, xcoord, ycoord)]
-  CNFTS <- CNFTS[sold_at_hours <= 24*3]
-} else {
-  CNFTS <- .CNFTS
-}
+# # CNFT listings ------------------------------------------------------------------------------------
+# api_link_cnft <- "https://api.cnft.io/market/listings"
+# 
+# .CNFT <- query_n(api_link_cnft, project, sold = FALSE) |>
+#   lapply(data.table) |> rbindlist(fill = TRUE)
+# 
+# .CNFT[, link := paste0("https://cnft.io/token/", `_id`)]
+# 
+# # Initialize data.table
+# CNFT <- data.table(asset = NA, type = NA, price = NA,
+#                    last_offer = NA, sc = NA, market = NA, link = NA)
+# 
+# for (i in 1:nrow(.CNFT)) {
+#   CNFT <- rbindlist(list(CNFT, data.table(
+#     asset          = .CNFT[i, assets[[1]]$metadata$name],
+#     type           = .CNFT[i, type],
+#     price          = .CNFT[i, price/length(assets[[1]]$metadata$name)],
+#     last_offer     = .CNFT[i, offers],
+#     sc             = .CNFT[i, smartContractTxid],
+#     market         = "cnft.io",
+#     link           = .CNFT[i, link],
+#     district       = .CNFT[i, assets[[1]]$metadata$District]
+#   )), fill = TRUE)
+# }
+# 
+# CNFT <- CNFT[2:nrow(CNFT)] # Clear first row from initialization
+# CNFT[, price        := price/10**6]
+# CNFT[, sc           := ifelse(is.na(sc), "no", "yes")]
+# 
+# for (i in 1:nrow(CNFT)) {
+#   .offers <- CNFT[i, last_offer[[1]]]
+#   if (nrow(.offers) == 0) {
+#     CNFT[i, last_offer := NA]
+#   } else {
+#     CNFT[i, last_offer := max(.offers$offer/10**6)]
+#   }
+# }
+# 
+# CNFT[, xcoord := extract_num(strsplit(asset, ",")[[1]][1]), 1:nrow(CNFT)]
+# CNFT[, ycoord := extract_num(strsplit(asset, ",")[[1]][2]), 1:nrow(CNFT)]
+# 
+# 
+# # CNFT sales ---------------------------------------------------------------------------------------
+# .CNFTS <- query_n(api_link_cnft, project, sold = TRUE, n = 11) |>
+#   lapply(data.table) |> rbindlist(fill = TRUE)
+# 
+# .CNFTS <- .CNFTS[!is.na(soldAt)]
+# 
+# if(nrow(.CNFTS) != 0) {
+#   # Initialize data.table
+#   CNFTS <- data.table(asset = NA, price = NA, market = NA, sold_at = NA)
+# 
+#   for (i in 1:nrow(.CNFTS)) {
+#     CNFTS <- rbindlist(list(CNFTS, data.table(
+#       asset          = .CNFTS[i, assets[[1]]$metadata$name],
+#       type           = .CNFTS[i, type],
+#       price          = .CNFTS[i, price/length(assets[[1]]$metadata$name)],
+#       market         = "cnft.io",
+#       sold_at        = .CNFTS[i, soldAt],
+#       district       = .CNFT[i, assets[[1]]$metadata$District]
+#     )), fill = TRUE)
+#   }
+# 
+#   CNFTS <- CNFTS[2:nrow(CNFTS)] # Clear first row from initialization
+#   CNFTS[, price         := price/10**6]
+#   CNFTS[, market        := "cnft.io"]
+#   CNFTS[, sold_at       := as_datetime(sold_at)]
+#   CNFTS[, sold_at_hours := difftime(time_now, sold_at, units = "hours")]
+#   CNFTS[, sold_at_days  := difftime(time_now, sold_at, units = "days")]
+#   CNFTS[, xcoord := extract_num(strsplit(asset, ",")[[1]][1]), 1:nrow(CNFTS)]
+#   CNFTS[, ycoord := extract_num(strsplit(asset, ",")[[1]][2]), 1:nrow(CNFTS)]
+# 
+#   CNFTS <- CNFTS[order(-sold_at), .(asset, type, price, district,
+#                                     sold_at, sold_at_hours, sold_at_days, market, xcoord, ycoord)]
+#   CNFTS <- CNFTS[sold_at_hours <= 24*3]
+# } else {
+#   CNFTS <- .CNFTS
+# }
 
 
 # Extract information from jpg.store ---------------------------------------------------------------
@@ -203,10 +203,12 @@ JPGS <- JPGS[sold_at_hours <= 24*3]
 
 # Merge markets data -------------------------------------------------------------------------------
 # Listings
-DT <- rbindlist(list(CNFT, JPG), fill = TRUE, use.names = TRUE)
+# DT <- rbindlist(list(CNFT, JPG), fill = TRUE, use.names = TRUE)
+DT <- JPG
 
 # Sales
-DTS <- rbindlist(list(CNFTS, JPGS), fill = TRUE, use.names = TRUE)
+# DTS <- rbindlist(list(CNFTS, JPGS), fill = TRUE, use.names = TRUE)
+DTS <- JPGS
 
 # Add data collection timestamp
 DT[, data_date := time_now]
@@ -235,7 +237,7 @@ DTE <- copy(DT)
 if (file.exists(.file_name)) {
   cat("File data/DTE exists:", file.exists(.file_name), "\n")
   DTE_old <- readRDS(.file_name)
-  DTE <- rbindlist(list(DTE, DTE_old))
+  DTE <- rbindlist(list(DTE, DTE_old), use.names = TRUE)
   DTE <- DTE[difftime(time_now, data_date, units = "hours") <= 24] # Only retain last 24 hours
 }
 saveRDS(DTE, file = .file_name)
