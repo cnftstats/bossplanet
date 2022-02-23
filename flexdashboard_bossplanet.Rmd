@@ -35,10 +35,26 @@ RAR <- readRDS("data/RAR.rds")
 # javascript (clickable datapoints url)
 # https://stackoverflow.com/questions/51681079/how-to-make-scatterplot-points-open-a-hyperlink-using-ggplotly-r
 js <- "function(el, x) {
-  el.on('plotly_click', function(d) {
-    var link = d.points[0].customdata;
-    window.open(link);
-  });
+    var id = el.getAttribute('id');
+    var gd = document.getElementById(id);
+    var d3 = Plotly.d3;
+    Plotly.update(id).then(attach);
+    function attach() {
+        gd.addEventListener('mousemove', function(evt) {
+            var xaxis = gd._fullLayout.xaxis;
+            var yaxis = gd._fullLayout.yaxis;
+            var bb = evt.target.getBoundingClientRect();
+            var x = xaxis.p2d(evt.clientX - bb.left);
+            var y = yaxis.p2d(evt.clientY - bb.top);
+            Plotly.relayout(gd, 'xaxis.title', 'x: ' + parseFloat(x).toFixed(0) + '  y: ' + parseFloat(y).toFixed(0));
+            // Plotly.relayout(gd, 'yaxis.title', 'y: ' + parseFloat(y).toFixed(0));
+            // Plotly.relayout(gd, 'title', ['x: ' + x, 'y: ' + y].join('<br>'));
+        });
+    };
+    el.on('plotly_click', function(d) {
+        var link = d.points[0].customdata;
+        window.open(link);
+    });
 }"
 # Functions
 loj <- function (X = NULL, Y = NULL, onCol = NULL) {
