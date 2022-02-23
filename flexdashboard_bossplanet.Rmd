@@ -117,7 +117,7 @@ ggplot(X, aes(x_label, N, fill = market)) +
         panel.grid.minor = element_blank())
 ```
 
-> Warning: `Bundles` (multiple assets listed together) are excluded! <span style="color:#CD2626">CNFT.io data is not being taken into account right now because of an issue! Working on a fix...</span>
+> Warning: `Bundles` (multiple assets listed together) are excluded!
 
 ### Sales (last 72h)
 ```{r fig.height=7, fig.width=10}
@@ -160,7 +160,7 @@ ggplot(X, aes(x_label, N, fill = market)) +
         panel.grid.minor = element_blank())
 ```
 
-> Warning: Only last 72h sales are included. `Bundles` (multiple assets sold together) are excluded! <span style="color:#CD2626">CNFT.io data is not being taken into account right now because of an issue! Working on a fix...</span>
+> Warning: Only last 72h sales are included. `Bundles` (multiple assets sold together) are excluded!
 
 ## Column 2 {data-width=350}
 ### Sweep that floor: Lowest listings
@@ -261,7 +261,7 @@ ggplotly(gg, tooltip = "text") %>%
   onRender(js)
 ```
 
-> Click on the data points to open the listings. Click and drag your mouse to zoom. You can zoom-in/out with your mouse wheel! Grey areas are minted lands. I have no clue what the white areas are. <span style="color:#CD2626">CNFT.io data is not being taken into account right now because of an issue! Working on a fix...</span>
+> Click on the data points to open the listings. Click and drag your mouse to zoom. You can zoom-in/out with your mouse wheel! Grey areas are minted lands. I have no clue what the white areas are.
 
 ### Sales (last 72h)
 ```{r}
@@ -310,7 +310,7 @@ ggplotly(gg, tooltip = "text") %>%
   onRender(js)
 ```
 
-> Click and drag your mouse to zoom. You can zoom-in/out with your mouse wheel. Grey areas are minted lands. I have no clue what the white areas are. <span style="color:#CD2626">CNFT.io data is not being taken into account right now because of an issue! Working on a fix...</span>
+> Click and drag your mouse to zoom. You can zoom-in/out with your mouse wheel. Grey areas are minted lands. I have no clue what the white areas are.
 
 ### Minted
 ```{r fig.height=10}
