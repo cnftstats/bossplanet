@@ -334,7 +334,7 @@ cat(CAP)
 #   coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180), expand = TRUE)
 ```
 
-# Support this project {data-icon="ion-heart"}
+# Support this project (Thank you so much kind stranger!) {data-icon="ion-heart"}
 ## Column 1
 ### Thanks for your support!
 You can support this project by spreading the word about it to the CNFT community! :-)
