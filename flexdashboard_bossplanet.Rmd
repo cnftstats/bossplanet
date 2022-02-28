@@ -201,7 +201,6 @@ datatable(X, class = 'compact stripe hover nowrap',
 
 # Map {data-icon="ion-android-map"}
 ## Column 1 {data-width=500, .tabset}
-
 <!-- ### Tiles -->
 <!-- ```{r} -->
 <!-- # XRAR <- RAR[!asset %in% DT$asset] -->
@@ -209,15 +208,15 @@ datatable(X, class = 'compact stripe hover nowrap',
 <!--                          "main/map_background.png?raw=true") -->
 
 
-<!-- X <- data.table(expand.grid(x = -180:180, y = -180:180), price_rank = NA) -->
+<!-- X <- data.table(expand.grid(x = -180:180, y = -60:180), price_rank = as.numeric(NA)) -->
 <!-- X[, xy := paste(x, y, sep = ",")] -->
 <!-- setnames(X, c("x", "y"), c("xcoord", "ycoord")) -->
 
 <!-- DT[, xy := paste(xcoord, ycoord, sep = ",")] -->
 
-<!-- loj(X, DT[, .(xcoord, ycoord, price_rank, xy)]) -->
+<!-- loj(X, DT[, .(xcoord, ycoord, price_rank, xy)], "xy") -->
 
-<!-- ggplot(DT) + -->
+<!-- gg <- ggplot(X) + -->
 <!--   geom_tile(aes(xcoord, ycoord, fill = price_rank)) + -->
 <!--   scale_x_continuous(breaks = c(-180, -60, +60, +180), expand = c(0.01, 0.01)) + -->
 <!--   scale_y_continuous(breaks = c(-180, -60, +60, +180), expand = c(0.01, 0.01)) + -->
@@ -227,8 +226,6 @@ datatable(X, class = 'compact stripe hover nowrap',
 <!--         panel.background = element_rect(fill = 'transparent')) -->
 
 <!-- ggplotly(gg) %>% config(scrollZoom = TRUE) -->
-
-
 <!-- ``` -->
 
 
@@ -246,7 +243,7 @@ gg <- ggplot() +
                                "</br></br>", paste("Price:", price,
                                                    "</br>District:", district,
                                                    "</br>Type:", type,
-                                                   "</br>Market:", market))), size = .5) +
+                                                   "</br>Market:", market))), size = .6) +
   scale_color_gradient2(low = 'steelblue3', mid = "goldenrod1", midpoint = .5, high = 'red',
                         na.value = "grey90",
                         breaks = 0:1, labels = c("Lowest", "Highest"), limits = 0:1) +
@@ -265,12 +262,12 @@ ggplotly(gg, tooltip = "text") %>%
            source = map_background,
            xref = "x",
            yref = "y",
-           x = -180,
-           y = 179,
-           sizex = 359,
-           sizey = 239,
+           x = -183.5,
+           y = 181.3,
+           sizex = 366.1,
+           sizey = 243.7,
            sizing = "stretch",
-           opacity = 1,
+           opacity = .3,
            layer = "below"
          ))) %>%
   config(scrollZoom = TRUE) %>% 
@@ -296,7 +293,7 @@ gg <- ggplot() +
                                                    "</br>District:", district,
                                                    "</br>Type:", type,
                                                    "</br>Sold time:", sold_time,
-                                                   "</br>Market:", market))), size = .3) +
+                                                   "</br>Market:", market))), size = .6) +
   scale_color_gradient2(low = 'steelblue3', mid = "goldenrod1", midpoint = .5, high = 'red',
                         na.value = "grey90",
                         breaks = 0:1, labels = c("Lowest", "Highest"), limits = 0:1) +
@@ -314,15 +311,15 @@ ggplotly(gg, tooltip = "text") %>%
            source = map_background,
            xref = "x",
            yref = "y",
-           x = -180,
-           y = 179,
-           sizex = 359,
-           sizey = 239,
+           x = -183.5,
+           y = 181.3,
+           sizex = 366.1,
+           sizey = 243.7,
            sizing = "stretch",
-           opacity = 1,
+           opacity = .3,
            layer = "below"
          ))) %>%
-  config(scrollZoom = TRUE) %>%
+  config(scrollZoom = TRUE) %>% 
   onRender(js)
 ```
 
