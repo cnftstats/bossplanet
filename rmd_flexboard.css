@@ -77,28 +77,28 @@ table.dataTable thead th {
 @-webkit-keyframes color {
   0% { color: white; }
   30% { color: white; }
-  50% { color: rgba(255, 0, 0, .5); }
+  50% { color: rgba(255, 204, 102, .8); }
   70% { color: white; }
   100% { color: white; }
 }
 @-moz-keyframes color {
   0% { color: white; }
   30% { color: white; }
-  50% { color: rgba(255, 0, 0, .5); }
+  50% { color: rgba(255, 204, 102, .8); }
   70% { color: white; }
   100% { color: white; }
 }
 @-o-keyframes color {
   0% { color: white; }
   30% { color: white; }
-  50% { color: rgba(255, 0, 0, .5); }
+  50% { color: rgba(255, 204, 102, .8); }
   70% { color: white; }
   100% { color: white; }
 }
 @keyframes color {
   0% { color: white; }
   30% { color: white; }
-  50% { color: rgba(255, 0, 0, .5); }
+  50% { color: rgba(255, 204, 102, .8); }
   70% { color: white; }
   100% { color: white; }
 }

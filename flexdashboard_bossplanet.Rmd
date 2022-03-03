@@ -135,9 +135,9 @@ ggplot(X, aes(x_label, N, fill = market)) +
 
 > Warning: `Bundles` (multiple assets listed together) are excluded!
 
-### Sales (last 72h)
+### Sales (last 24h)
 ```{r fig.height=7, fig.width=10}
-X <- copy(DTS[type != "bundle"])
+X <- copy(DTS[type != "bundle" & sold_at_hours <= 24])
 X[price %between% c(0, 999), price_range := trunc(price/100)*100]
 X[price %between% c(1000, 4999), price_range := trunc(price/1000)*1000]
 X[price >= 5000, price_range := 5000]
@@ -267,7 +267,7 @@ ggplotly(gg, tooltip = "text") %>%
            sizex = 366.1,
            sizey = 243.7,
            sizing = "stretch",
-           opacity = .3,
+           opacity = .5,
            layer = "below"
          ))) %>%
   config(scrollZoom = TRUE) %>% 
@@ -276,17 +276,14 @@ ggplotly(gg, tooltip = "text") %>%
 
 > Click on the data points to open the listings. Click and drag your mouse to zoom. You can zoom-in/out with your mouse wheel! Grey areas are minted lands. I have no clue what the white areas are.
 
-### Sales (last 72h)
+### Sales (last 24h)
 ```{r}
-DTS[, sold_time := trunc(sold_at_days)]
-DTS[, sold_time := fcase(trunc(sold_at_days) == 0, "0-24h ago",
-                         trunc(sold_at_days) == 1, "24-48h ago",
-                         trunc(sold_at_days) == 2, "48-72h ago")]
+X <- DTS[sold_at_hours <= 24]
+X[, sold_time := sprintf("%.fh ago", sold_at_hours)]
 
-# XRAR <- RAR[!asset %in% DTS$asset]
 gg <- ggplot() +
   # geom_point(data = XRAR, aes(x = xcoord, y = ycoord), color = "grey90", alpha = .9, size = .3) +
-  geom_point(data = DTS, 
+  geom_point(data = X, 
              aes(x = xcoord, y = ycoord, color = price_rank,
                  text = paste0(asset,
                                "</br></br>", paste("Price:", price,
@@ -316,7 +313,7 @@ ggplotly(gg, tooltip = "text") %>%
            sizex = 366.1,
            sizey = 243.7,
            sizing = "stretch",
-           opacity = .3,
+           opacity = .5,
            layer = "below"
          ))) %>%
   config(scrollZoom = TRUE) %>% 
@@ -347,12 +344,10 @@ cat(CAP)
 #   coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180), expand = TRUE)
 ```
 
-# Support this project (Thank you so much kind stranger!) {data-icon="ion-heart"}
+# Buy me a coffee {data-icon="ion-coffee"}
 ## Column 1
 ### Thanks for your support!
-You can support this project by spreading the word about it to the CNFT community! :-)
-
-Tips would also be greatly appreciated! This would encourage me to maintain and improve the website (for instance, to get a better hosting service).  
+Tips would be greatly appreciated! This would encourage me to maintain and improve the website (for instance, to get a better hosting service).  
 
 ![Tip me](tipme.svg){width=200px}  
 **addr1qx04gwr9kazlpnm6t8a8h0pggk440zs3fdayct732a0wwwd3usryhnh52pevj5xy7cgp9d4jnywar6g0tnct58dyfukszl25n8** 
