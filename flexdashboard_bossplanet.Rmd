@@ -296,7 +296,7 @@ ggplotly(gg, tooltip = "text") %>%
     ))
   ) %>%
   config(scrollZoom = TRUE) %>% 
-  onRender(js)
+  onRender(js) %>% toWebGL()
 ```
 
 > Click on the data points to open the listings. Zoom-in/out with your mouse wheel. <b><span style='color:red'>Double click on the `(Listing,Low)` legend to display only the lowest listings.</span></b>
@@ -342,7 +342,7 @@ ggplotly(gg, tooltip = "text") %>%
            layer = "below"
          ))) %>%
   config(scrollZoom = TRUE) %>% 
-  onRender(js)
+  onRender(js) %>% toWebGL()
 ```
 
 > Click and drag your mouse to zoom. You can zoom-in/out with your mouse wheel. Grey areas are minted lands. I have no clue what the white areas are.
