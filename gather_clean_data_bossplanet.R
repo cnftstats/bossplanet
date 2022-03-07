@@ -127,7 +127,7 @@ if(nrow(.CNFTS) != 0) {
       price          = .CNFTS[i, price/length(assets[[1]]$metadata$name)],
       market         = "cnft.io",
       sold_at        = .CNFTS[i, soldAt],
-      district       = .CNFT[i, assets[[1]]$metadata$District]
+      district       = .CNFTS[i, assets[[1]]$metadata$District]
     )), fill = TRUE)
   }
 
