@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CNFTSTATS</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
+      integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI="
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      #myplot {
+        float: left;
+      }
+      #coord_table {
+        color: cadetblue;
+        margin: 0px;
+      }
+      #coord_table input {
+        width: 50px;
+        padding: 0px;
+        margin: 0px;
+      }
+      #plot_button {
+        background-color: darkcyan;
+        border: none;
+        color: white;
+        padding: 5px 5px;
+        width: 115px;
+        text-decoration: none;
+        margin: 4px 2px;
+        cursor: pointer;
+        -webkit-box-shadow: 14px 13px 9px -11px rgba(0, 0, 0, 0.48);
+        box-shadow: 14px 13px 9px -11px rgba(0, 0, 0, 0.48);
+      }
+      #plot_button:hover {
+        background-color: darkgreen;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="myplot"></div>
+    <input type="button" id="plot_button" value="Click to plot lands" />
+    <table id="coord_table">
+      <tr>
+        <th>x</th>
+        <th>y</th>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x1" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y1" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x2" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y2" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x3" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y3" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x4" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y4" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x5" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y5" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x6" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y6" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x7" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y7" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x8" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y8" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x9" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y9" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x10" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y10" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x11" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y11" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x12" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y12" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x13" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y13" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x14" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y14" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x15" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y15" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x16" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y16" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x17" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y17" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x18" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y18" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x19" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y19" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x20" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y20" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x21" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y21" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x22" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y22" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x23" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y23" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x24" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y24" class="input_x" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" id="x25" class="input_x" />
+        </td>
+        <td>
+          <input type="number" id="y25" class="input_x" />
+        </td>
+      </tr>
+    </table>
+    <script>
+      // const map_background =
+      // "https://raw.githubusercontent.com/cnftstats/bossplanet/main/map_background_tile_grey.png?raw=true";
+      const map_background =
+        "https://raw.githubusercontent.com/cnftstats/bossplanet/main/map_background.png?raw=true";
+
+      var trace_land = {
+        x: [0],
+        y: [30],
+        mode: "markers",
+        type: "scattergl",
+        marker: {
+          color: "green",
+          size: 4,
+          opacity: 0,
+          symbol: "square",
+        },
+        hoverinfo: "none",
+      };
+
+      var data = [trace_land];
+
+      var layout = {
+        title: "",
+        xaxis: {
+          range: [-181, 181],
+          tickmode: "array",
+          tickvals: [-180, -60, 60, 180],
+          ticktext: ["-180", "-60", "60", "180"],
+          color: "#b3b3b3",
+          gridcolor: "#cfcfcf",
+          layer: "above traces",
+          showline: false,
+          ticklabelposition: "outside",
+          ticklen: 4,
+          zeroline: false,
+        },
+        yaxis: {
+          range: [-61, 181],
+          tickmode: "array",
+          tickvals: [-60, 60, 180],
+          ticktext: ["-60", "60", "180"],
+          color: "#b3b3b3",
+          gridcolor: "#cfcfcf",
+          layer: "above traces",
+          showline: false,
+          ticklabelposition: "outside",
+          ticklen: 4,
+          zeroline: false,
+          scaleanchor: "x", // to fix scale ratio so it is square. Pb: makes ticks disapear
+          scaleratio: 0.9, // to fix scale ratio so it is square. Pb: makes ticks disapear
+        },
+        width: 1100,
+        height: 670,
+        margin: {
+          autoexpand: false,
+          pad: 0,
+          t: 10,
+          r: 30,
+          b: 30,
+          l: 30,
+        },
+        font: {
+          color: "grey",
+          size: 12,
+        },
+        images: [
+          {
+            source: map_background,
+            xref: "x",
+            yref: "y",
+            x: -183.5,
+            y: 181.3,
+            sizex: 366.1,
+            sizey: 243.7,
+            sizing: "stretch",
+            opacity: 0.4,
+            layer: "below",
+          },
+        ],
+        annotations: [
+          {
+            x: 0,
+            y: -55,
+            xref: "x",
+            yref: "y",
+            text: "https://cnftstats.github.io/bossplanet/#map",
+            showarrow: false,
+            font: {
+              // family: "Courier New",
+              size: 14,
+              color: "#b3b3b3",
+            },
+          },
+        ],
+      };
+
+      var config = {
+        scrollZoom: true,
+        displaylogo: false,
+      };
+
+      Plotly.newPlot(myplot, data, layout, config);
+
+      console.log($("#x1").val());
+      console.log($("#y1").val());
+
+      $("#plot_button").click(function () {
+        var shapes_sqr = [];
+        for (let i = 1; i < 26; i++) {
+          var input_exists =
+            $("#x" + i).val() !== "" && $("#y" + i).val() !== "";
+          if (input_exists) {
+            shapes_sqr.push({
+              type: "rect",
+              xref: "x",
+              yref: "y",
+              x0: parseInt($("#x" + i).val()) - 0.25,
+              y0: parseInt($("#y" + i).val()) - 0.25,
+              x1: parseInt($("#x" + i).val()) + 0.25,
+              y1: parseInt($("#y" + i).val()) + 0.25,
+              fillcolor: "red",
+              line: {
+                color: "red",
+              },
+            });
+          }
+        }
+
+        shapes_sqr = { shapes: shapes_sqr };
+        var layout_update = Object.assign(layout, shapes_sqr);
+        console.log(layout_update);
+        Plotly.newPlot(myplot, data, layout_update);
+      });
+    </script>
+  </body>
+</html>
+
+<!-- https://plotly.com/javascript/ -->
+<!-- https://plotly.com/javascript/line-and-scatter/ -->
+<!-- https://plotly.com/javascript/reference/scattergl/ -->
+<!-- https://plotly.com/javascript/reference/scatter/ -->
+<!-- https://stackoverflow.com/questions/17384218/jquery-input-event -->
