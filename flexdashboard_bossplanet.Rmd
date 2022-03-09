@@ -96,17 +96,17 @@ $(document).ready(function(){
 ### Listings
 ```{r fig.height=7, fig.width=10}
 X <- copy(DT[type != "bundle"])
-X[price %between% c(0, 999), price_range := trunc(price/100)*100]
+X[price %between% c(0, 999),     price_range := trunc(price/100)*100]
 X[price %between% c(1000, 4999), price_range := trunc(price/1000)*1000]
-X[price >= 5000, price_range := 5000]
+X[price >= 5000,                 price_range := 5000]
 X <- X[complete.cases(price_range), .(price_range, price, market, district_txt)]
 CAP <- X[, .(floor = min(price), listings = .N), district_txt][order(district_txt)]
 .caption <- paste0(CAP[, sprintf("%s: Floor = %s | Listings = %d", district_txt, floor, listings)],
                    collapse = "\n")
 X <- X[, .N, .(price_range, market, district_txt)][order(price_range)]
-X[price_range %between% c(0, 999),  x_label := paste0(price_range, "-", price_range + (100-1))]
-X[price_range %between% c(1000, 4999),  x_label := paste0(price_range, "-", price_range + (1000-1))]
-X[price_range >= 5000,               x_label := "5000+"]
+X[price_range %between% c(0, 999),     x_label := paste0(price_range, "-", price_range + (100-1))]
+X[price_range %between% c(1000, 4999), x_label := paste0(price_range, "-", price_range + (1000-1))]
+X[price_range >= 5000,                 x_label := "5000+"]
 .X <- X[, .(price_range, x_label)] %>% unique %>% .[order(price_range)]
 X[, x_label := factor(x_label, levels = .X$x_label)]
 X[, market  := factor(market, levels = c("jpg.store", "cnft.io"))]
@@ -138,18 +138,18 @@ ggplot(X, aes(x_label, N, fill = market)) +
 ### Sales (last 24h)
 ```{r fig.height=7, fig.width=10}
 X <- copy(DTS[type != "bundle" & sold_at_hours <= 24])
-X[price %between% c(0, 999), price_range := trunc(price/100)*100]
+X[price %between% c(0, 999),     price_range := trunc(price/100)*100]
 X[price %between% c(1000, 4999), price_range := trunc(price/1000)*1000]
-X[price >= 5000, price_range := 5000]
+X[price >= 5000,                 price_range := 5000]
 X <- X[complete.cases(price_range), .(price_range, price, market, district_txt)]
 CAP <- X[, .(floor = min(price), roof = max(price), sales = .N), district_txt][order(district_txt)]
 .caption <- paste0(CAP[, sprintf("%s: Sale floor = %s | Sale roof = %d | Sales = %d",
                                  district_txt, floor, roof, sales)],
                    collapse = "\n")
 X <- X[, .N, .(price_range, market, district_txt)][order(price_range)]
-X[price_range %between% c(0, 999),  x_label := paste0(price_range, "-", price_range + (100-1))]
-X[price_range %between% c(1000, 4999),  x_label := paste0(price_range, "-", price_range + (1000-1))]
-X[price_range >= 5000,               x_label := "5000+"]
+X[price_range %between% c(0, 999),     x_label := paste0(price_range, "-", price_range + (100-1))]
+X[price_range %between% c(1000, 4999), x_label := paste0(price_range, "-", price_range + (1000-1))]
+X[price_range >= 5000,                 x_label := "5000+"]
 .X <- X[, .(price_range, x_label)] %>% unique %>% .[order(price_range)]
 X[, x_label := factor(x_label, levels = .X$x_label)]
 X[, market  := factor(market, levels = c("jpg.store", "cnft.io"))]
@@ -295,7 +295,7 @@ ggplotly(gg, tooltip = "text") %>%
       layer = "below"
     ))
   ) %>%
-  config(scrollZoom = TRUE) %>% 
+  config(scrollZoom = TRUE, displaylogo = FALSE) %>% 
   onRender(js) %>% toWebGL()
 ```
 
@@ -341,18 +341,21 @@ ggplotly(gg, tooltip = "text") %>%
            opacity = .5,
            layer = "below"
          ))) %>%
-  config(scrollZoom = TRUE) %>% 
+  config(scrollZoom = TRUE, displaylogo = FALSE) %>% 
   onRender(js) %>% toWebGL()
 ```
 
 > Click and drag your mouse to zoom. You can zoom-in/out with your mouse wheel. Grey areas are minted lands. I have no clue what the white areas are.
+
+### Plot lands
+<iframe src="https://cnftstats.github.io/bossplanet/plot_lands" style="height:100%;width:100%;border:none;" title="plot_lands"></iframe>
 
 ### Minted
 ```{r fig.height=10}
 CAP <- RAR[, .(minted = .N, percent = sprintf("%05.02f%%", .N/nrow(RAR)*100)), district]
 CAP <- CAP[, sprintf("District %s = %d (%s) lands", district, minted, percent)]
 CAP <- paste0(CAP, collapse = "\n")
-CAP <- paste0("Total = ", nrow(RAR), " lands (100%)\n", CAP)
+CAP <- paste0("Total = ", nrow(RAR), " (100%) lands\n", CAP)
 cat(CAP)
 
 
@@ -368,6 +371,7 @@ cat(CAP)
 #         plot.subtitle = element_text(color = "steelblue3", size = 12)) +
 #   coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180), expand = TRUE)
 ```
+
 
 # Buy me a coffee (Thank you!) {data-icon="ion-coffee"}
 ## Column 1
