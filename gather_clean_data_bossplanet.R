@@ -119,7 +119,7 @@ CNFT[, ycoord := extract_num(strsplit(asset, ",")[[1]][2]), 1:nrow(CNFT)]
 if(nrow(.CNFTS) != 0) {
   # Initialize data.table
   CNFTS <- data.table(asset = NA, price = NA, market = NA, sold_at = NA)
-
+  
   for (i in 1:nrow(.CNFTS)) {
     CNFTS <- rbindlist(list(CNFTS, data.table(
       asset          = .CNFTS[i, assets[[1]]$metadata$name],
@@ -130,7 +130,7 @@ if(nrow(.CNFTS) != 0) {
       district       = .CNFTS[i, assets[[1]]$metadata$District]
     )), fill = TRUE)
   }
-
+  
   CNFTS <- CNFTS[2:nrow(CNFTS)] # Clear first row from initialization
   CNFTS[, price         := price/10**6]
   CNFTS[, market        := "cnft.io"]
@@ -139,7 +139,7 @@ if(nrow(.CNFTS) != 0) {
   CNFTS[, sold_at_days  := difftime(time_now, sold_at, units = "days")]
   CNFTS[, xcoord := extract_num(strsplit(asset, ",")[[1]][1]), 1:nrow(CNFTS)]
   CNFTS[, ycoord := extract_num(strsplit(asset, ",")[[1]][2]), 1:nrow(CNFTS)]
-
+  
   CNFTS <- CNFTS[order(-sold_at), .(asset, type, price, district,
                                     sold_at, sold_at_hours, sold_at_days, market, xcoord, ycoord)]
   CNFTS <- CNFTS[sold_at_hours <= 24*3]
@@ -152,53 +152,55 @@ if(nrow(.CNFTS) != 0) {
 # jpg.store/api/policy - all supported policies
 # jpg.store/api/policy/[id]/listings - listings for a given policy
 # jpg.store/api/policy/[id]/sales - sales for a given policy
-api_link <- sprintf("jpg.store/api/policy/%s/listings", policy_id)
+JPG_list <- list()
+p <- 1
+while (TRUE) {
+  api_link <- sprintf("https://server.jpgstoreapis.com/policy/%s/listings?page=%d", policy_id, p)
+  X <- data.table(fromJSON(rawToChar(GET(api_link)$content)))
+  if (nrow(X) == 0) break
+  JPG_list[[p]] <- X
+  p <- p + 1
+}
 
-JPG <- data.table(fromJSON(rawToChar(GET(api_link)$content)))
-JPG[, asset_id       := asset]
-JPG[, link           := paste0("https://www.jpg.store/asset/", asset)]
-JPG[, price          := price_lovelace]
-JPG[, asset          := asset_display_name]
-JPG[, price          := price/10**6]
+JPG <- rbindlist(JPG_list)
+
+JPG[, link           := paste0("https://www.jpg.store/asset/", asset_id)]
+JPG[, asset          := display_name]
+JPG[, price          := price_lovelace/10**6]
 JPG[, sc             := "yes"]
 JPG[, market         := "jpg.store"]
 JPG[, xcoord         := extract_num(strsplit(asset, ",")[[1]][1]), 1:nrow(JPG)]
 JPG[, ycoord         := extract_num(strsplit(asset, ",")[[1]][2]), 1:nrow(JPG)]
 
-loj(JPG, RAR[, .(asset, district)], "asset")
-
-for (.asset_id in JPG[is.na(district), asset_id]) {
-  JPG[asset_id == .asset_id, district := get_asset_data(asset_id)$onchain_metadata$District]
-}
+loj(JPG, RAR[, .(asset_id, district, xcoord, ycoord)], "asset_id")
 
 JPG <- JPG[, .(asset, type = "listing", price, district, last_offer = NA, sc, market, link,
                xcoord, ycoord)]
 
 
 # JPG sales ----------------------------------------------------------------------------------------
-api_link <- sprintf("jpg.store/api/policy/%s/sales", policy_id)
+JPGS_list <- lapply(1:5, function(p) {
+  api_link <- sprintf("https://server.jpgstoreapis.com/policy/%s/sales?page=%d", policy_id, p)
+  X <- data.table(fromJSON(rawToChar(GET(api_link)$content)))
+  return(X)
+})
 
-JPGS <- data.table(fromJSON(rawToChar(GET(api_link)$content)))
-JPGS[, asset_id       := asset]
-JPGS[, price          := price_lovelace]
-JPGS[, asset          := asset_display_name]
-JPGS[, price          := price/10**6]
+JPGS <- rbindlist(JPGS_list)
+
+JPGS[, asset          := display_name]
+JPGS[, price          := price_lovelace/10**6]
 JPGS[, market         := "jpg.store"]
-JPGS[, sold_at        := as_datetime(purchased_at)]
+JPGS[, sold_at        := as_datetime(confirmed_at)]
 JPGS[, sold_at_hours  := difftime(time_now, sold_at, units = "hours")]
 JPGS[, sold_at_days   := difftime(time_now, sold_at, units = "days")]
 JPGS[, xcoord         := extract_num(strsplit(asset, ",")[[1]][1]), 1:nrow(JPGS)]
 JPGS[, ycoord         := extract_num(strsplit(asset, ",")[[1]][2]), 1:nrow(JPGS)]
 
-loj(JPGS, RAR[, .(asset, district)], "asset")
-
-for (.asset_id in JPGS[is.na(district), asset_id]) {
-  JPGS[asset_id == .asset_id, district := get_asset_data(asset_id)$onchain_metadata$District]
-}
+loj(JPGS, RAR[, .(asset_id, district, xcoord, ycoord)], "asset_id")
 
 JPGS <- JPGS[order(-sold_at), .(asset, type = "listings", price, district,
                                 sold_at, sold_at_hours, sold_at_days, market, xcoord, ycoord)]
-JPGS <- JPGS[sold_at_hours <= 24*3]
+JPGS <- JPGS[sold_at_hours <= 24]
 
 
 # Merge markets data -------------------------------------------------------------------------------
