@@ -12,6 +12,8 @@ output:
     self_contained: TRUE
     includes:
       in_header: header.html
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -45,10 +47,10 @@ js <- "function(el, x) {
             var yaxis = gd._fullLayout.yaxis;
             var bb = evt.target.getBoundingClientRect();
             var x = xaxis.p2d(evt.clientX - bb.left);
+            x = parseFloat(x).toFixed(0);
             var y = yaxis.p2d(evt.clientY - bb.top);
-            Plotly.relayout(gd, 'xaxis.title', 'x: ' + parseFloat(x).toFixed(0) + '  y: ' + parseFloat(y).toFixed(0));
-            // Plotly.relayout(gd, 'yaxis.title', 'y: ' + parseFloat(y).toFixed(0));
-            // Plotly.relayout(gd, 'title', ['x: ' + x, 'y: ' + y].join('<br>'));
+            y = parseFloat(y).toFixed(0);
+            Plotly.relayout(gd, 'xaxis.title', 'x: ' + x + '  y: ' + y);
         });
     };
     el.on('plotly_click', function(d) {
@@ -56,6 +58,8 @@ js <- "function(el, x) {
         window.open(link);
     });
 }"
+
+
 # Functions
 loj <- function (X = NULL, Y = NULL, onCol = NULL) {
   if (truelength(X) == 0 | truelength(Y) == 0) 
@@ -229,6 +233,162 @@ datatable(X, class = 'compact stripe hover nowrap',
 <!-- ``` -->
 
 
+### Listings plotly
+```{r}
+map_background <- paste0("https://raw.githubusercontent.com/cnftstats/bossplanet/",
+                         "main/map_background.png?raw=true")
+
+# To do:
+# add_polygons (so can be zoomed)
+
+js2 <- "function(el, x) {
+    var id = el.getAttribute('id');
+    var gd = document.getElementById(id);
+    var d3 = Plotly.d3;
+    Plotly.update(id).then(attach);
+    function attach() {
+        gd.addEventListener('mousemove', function(evt) {
+            var xaxis = gd._fullLayout.xaxis;
+            var yaxis = gd._fullLayout.yaxis;
+            var bb = evt.target.getBoundingClientRect();
+            var x = xaxis.p2d(evt.clientX - bb.left);
+            x = parseFloat(x).toFixed(0);
+            var y = yaxis.p2d(evt.clientY - bb.top);
+            y = parseFloat(y).toFixed(0);
+            var layout_update = {
+              annotations: [
+                {
+                  x: 0,
+                  y: -54,
+                  xref: 'x',
+                  yref: 'y',
+                  text: '(' + x + ', ' + y + ')',
+                  showarrow: false,
+                  font: {
+                    size: 14,
+                    color: '#b3b3b3',
+                  },
+                },
+              ]
+            }
+            Plotly.relayout(gd, layout_update);
+        });
+    };
+    el.on('plotly_click', function(d) {
+        var link = d.points[0].customdata;
+        window.open(link);
+    });
+}"
+
+
+X <- copy(DT)
+
+percent_high_low <- 15
+
+.lowest_prices <- DT$price[order(DT$price)]
+.lowest_prices <- .lowest_prices[1:(floor(length(.lowest_prices)*percent_high_low/100))]
+.lowest_prices <- max(.lowest_prices)
+
+.highest_prices <- DT$price[order(-DT$price)]
+.highest_prices <- .highest_prices[1:(floor(length(.highest_prices)*percent_high_low/100))]
+.highest_prices <- min(.highest_prices)
+
+X[, show_price := fcase(price <= .lowest_prices, "Low",
+                        price > .lowest_prices & price < .highest_prices, "Med",
+                        price >= .highest_prices, "High")]
+X[, show_price := factor(show_price, levels = c("Low", "Med", "High"))]
+
+
+
+plot_ly(
+  data = X, x = ~xcoord, y = ~ycoord, split = ~interaction(type, show_price),
+  customdata = ~link,
+  type = "scatter", mode = "markers",
+  text = ~paste0(paste("Price:", price,
+                       "</br>District:", district,
+                       "</br>Type:", type,
+                       "</br>Market:", market)),
+  marker = list(
+    size = 3,
+    color = ~price_rank,
+    colorscale = list(c(0, .5, 1), c('#0d71db', "#dbc00d", "#db220d")),
+    colorbar = list(
+      title = list(text = "Price"),
+      len = .5, # length of the color bar
+      x = 1,
+      y = .25,
+      outlinewidth = .5,
+      thickness = 15,
+      tickmode = "array",
+      tickvals = c(0, 1),
+      ticktext = c("Low", "High")
+    )
+    # colorscale = "Jet"
+  )
+) %>% layout(
+  title = "",
+  xaxis = list(
+    title = list(text = ""),
+    range = c(-181, 181),
+    tickmode = "array",
+    tickvals = c(-180, -60, 60, 180),
+    ticktext = c("-180", "-60", "60", "180"),
+    color = "#b3b3b3",
+    gridcolor = "#cfcfcf",
+    layer = "above traces",
+    showline = FALSE,
+    ticklabelposition = "outside",
+    ticklen = 4,
+    zeroline = FALSE
+  ),
+  yaxis = list(
+    title = list(text = ""),
+    range = c(-61, 181),
+    tickmode = "array",
+    tickvals = c(-60, 60, 180),
+    ticktext = c("-60", "60", "180"),
+    color = "#b3b3b3",
+    gridcolor = "#cfcfcf",
+    layer = "above traces",
+    showline = FALSE,
+    ticklabelposition = "outside",
+    ticklen = 4,
+    zeroline = FALSE
+    # scaleanchor = "x", # to fix scale ratio so it is square. Pb: makes ticks disapear
+    # scaleratio = 1 # to fix scale ratio so it is square. Pb: makes ticks disapear
+  ),
+  font = list(
+    color = "grey",
+    size = 12
+  ),
+  legend = list(
+    title = list(text = "Type"),
+    x = 1
+  ),
+  images = list(list(
+    source = map_background,
+    xref = "x",
+    yref = "y",
+    x = -183.5,
+    y = 181.3,
+    sizex = 366.1,
+    sizey = 243.7,
+    sizing = "stretch",
+    opacity = .5,
+    layer = "below"
+  )),
+  margin = list(
+    autoexpand = FALSE,
+    pad = 0,
+    t = 15,
+    r = 100,
+    b = 30,
+    l = 35
+  )) %>%
+  config(scrollZoom = TRUE, displaylogo = FALSE) %>%
+  onRender(js2)
+```
+
 ### Listings
 ```{r}
 # XRAR <- RAR[!asset %in% DT$asset]
@@ -373,7 +533,7 @@ cat(CAP)
 ```
 
 
-# Buy me a coffee (So much coffee, you guys rock!!) {data-icon="ion-coffee"}
+# Buy me a coffee {data-icon="ion-coffee"}
 ## Column 1
 ### Thanks for your support!
 Tips would be greatly appreciated! This would encourage me to maintain and improve the website (for instance, to get a better hosting service).  
