@@ -83,7 +83,7 @@ $(document).ready(function(){
 
 # Sidebar {data-width=80, .sidebar}
 <ul id="sidebar_ul">
-<li><a href="https://cnftstats.github.io/adapes">Adapes</a></li>
+<li><a href="https://cnftstats.github.io/adapes">ApesSociety</a></li>
 <li><a href="https://cnftstats.github.io/bcrc">BCRC</a></li>
 <li><a href="https://cnftstats.github.io/borgs">BorgsClub</a></li>
 <li id="currentProject"><a href="https://cnftstats.github.io/bossplanet">BossPlanet</a></li>
@@ -545,12 +545,9 @@ Tips would be greatly appreciated! This would encourage me to maintain and impro
 ## Columun 1
 ### About the website
 #### The data
-- Listings data is comes from <a href="https://cnft.io/" target="_blank">cnft.io</a> and <a href="https://www.jpg.store/" target="_blank">jpg.store</a> marketplaces.
+- Listings data is comes from <a href="https://cnft.io/" target="_blank">cnft.io</a>, <a href="https://www.jpg.store/" target="_blank">jpg.store</a>and <a href="https://www.spacebudz.io/" target="_blank">spacebudz.io</a> marketplaces
 - Rank and rarity scores come from <a href="https://cnft.tools/" target="_blank">cnft.tools</a>.
-- The website is updated every ~10mins (expect for the Pavia projects which takes more time). You need to hit `F5` to manually see the updates on the website.
-
-#### Comming soon
-- Only the *listings* are currently analyzed, but the *sales* will be soon included
+- The website is updated every ~10mins. You need to hit `F5` to manually see the updates on the website.
 
 #### Disclaimer
 - This is an early version, so there might be some bugs! Use at your own risk
