@@ -211,15 +211,23 @@ datatable(X, class = 'compact stripe hover nowrap',
 <!--                          "main/map_background.png?raw=true") -->
 
 
-<!-- X <- data.table(expand.grid(x = -180:180, y = -60:180), price_rank = as.numeric(NA)) -->
+<!-- X <- data.table(expand.grid(x = -180:180, y = -60:180), -->
+<!--                 price_rank = as.numeric(NA), link = NA, text_tooltip = "HI") -->
 <!-- X[, xy := paste(x, y, sep = ",")] -->
 <!-- setnames(X, c("x", "y"), c("xcoord", "ycoord")) -->
 
-<!-- DT[, xy := paste(xcoord, ycoord, sep = ",")] -->
+<!-- Y <- copy(DT) -->
+<!-- Y[, xy := paste(xcoord, ycoord, sep = ",")] -->
+<!-- Y[, text_tooltip := sprintf("%s</br></br>Price: %.0f</br>District: %.0f</br>Type: %s</br>Market: %s", -->
+<!--                             asset, price, district, type, market)] -->
+<!-- Y <- Y[, .(xcoord, ycoord, price_rank, link, text_tooltip, xy)] -->
 
-<!-- loj(X, DT[, .(xcoord, ycoord, price_rank, xy)], "xy") -->
+<!-- X <- X[!xy %in% Y$xy] -->
+<!-- X <- rbindlist(list(X, Y), use.names = TRUE) -->
 
-<!-- gg <- ggplot(X) + -->
+<!-- # loj(X, DT[, .(xcoord, ycoord, price_rank, link, xy)], "xy") -->
+
+<!-- gg <- ggplot(X, customdata = link, text = text_tooltip) + -->
 <!--   geom_tile(aes(xcoord, ycoord, fill = price_rank)) + -->
 <!--   scale_x_continuous(breaks = c(-180, -60, +60, +180), expand = c(0.01, 0.01)) + -->
 <!--   scale_y_continuous(breaks = c(-180, -60, +60, +180), expand = c(0.01, 0.01)) + -->
@@ -228,7 +236,7 @@ datatable(X, class = 'compact stripe hover nowrap',
 <!--         panel.grid.major = element_line(colour = "grey80"), -->
 <!--         panel.background = element_rect(fill = 'transparent')) -->
 
-<!-- ggplotly(gg) %>% config(scrollZoom = TRUE) -->
+<!-- ggplotly(gg, tooltip = "text") %>% config(scrollZoom = TRUE) %>% onRender(js) -->
 <!-- ``` -->
 
 
@@ -434,12 +442,13 @@ gg <- ggplot() +
         panel.grid.major = element_line(colour = "grey80"),
         panel.background = element_rect(fill = 'transparent'),
         legend.title = element_text(size = 11),
-        legend.text = element_text(size = 9))
-# coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180))
+        legend.text = element_text(size = 9)) +
+  coord_fixed(xlim = c(-180, 180), ylim = c(-60, 180))
 
 
 ggplotly(gg, tooltip = "text") %>%
   layout(
+    xaxis = list(range = c(0, 1)),
     legend = list(x = 1, y = .4, bgcolor = 'rgba(255,255,255,0.6)'),
     images = list(list(
       source = map_background,
@@ -450,7 +459,7 @@ ggplotly(gg, tooltip = "text") %>%
       sizex = 366.1,
       sizey = 243.7,
       sizing = "stretch",
-      opacity = .5,
+      opacity = .4,
       layer = "below"
     ))
   ) %>%
@@ -466,9 +475,8 @@ X <- DTS[sold_at_hours <= 24]
 X[, sold_time := sprintf("%.fh ago", sold_at_hours)]
 
 gg <- ggplot() +
-  # geom_point(data = XRAR, aes(x = xcoord, y = ycoord), color = "grey90", alpha = .9, size = .3) +
   geom_point(data = X, 
-             aes(x = xcoord, y = ycoord, color = price_rank,
+             aes(x = xcoord, y = ycoord, color = price_rank, shape = type,
                  text = paste0(asset,
                                "</br></br>", paste("Price:", price,
                                                    "</br>District:", district,
@@ -477,29 +485,36 @@ gg <- ggplot() +
                                                    "</br>Market:", market))), size = .6) +
   scale_color_gradient2(low = 'steelblue3', mid = "goldenrod1", midpoint = .5, high = 'red',
                         na.value = "grey90",
-                        breaks = 0:1, labels = c("Lowest", "Highest"), limits = 0:1) +
+                        breaks = 0:1, labels = c("Low", "High"), limits = 0:1) +
   scale_x_continuous(breaks = c(-180, -60, +60, +180), expand = c(0.01, 0.01)) +
   scale_y_continuous(breaks = c(-180, -60, +60, +180), expand = c(0.01, 0.01)) +
+  scale_shape_manual(name = "Filter", values = c("listing" = 16, "bundle" = 17)) +
   labs(color = "Price", x = "", y = "") +
   theme(panel.grid.minor = element_blank(),
         panel.grid.major = element_line(colour = "grey80"),
-        panel.background = element_rect(fill = 'transparent'))
-# coord_fixed(xlim = c(-180, 180), ylim = c(-180, 180), expand = TRUE)
+        panel.background = element_rect(fill = 'transparent'),
+        legend.title = element_text(size = 11),
+        legend.text = element_text(size = 9)) +
+  coord_fixed(xlim = c(-180, 180), ylim = c(-60, 180))
+
 
 ggplotly(gg, tooltip = "text") %>%
-  layout(legend = list(x = 1, y = .2, bgcolor = 'rgba(255,255,255,0.6)'),
-         images = list(list(
-           source = map_background,
-           xref = "x",
-           yref = "y",
-           x = -183.5,
-           y = 181.3,
-           sizex = 366.1,
-           sizey = 243.7,
-           sizing = "stretch",
-           opacity = .5,
-           layer = "below"
-         ))) %>%
+  layout(
+    xaxis = list(range = c(0, 1)),
+    legend = list(x = 1, y = .4, bgcolor = 'rgba(255,255,255,0.6)'),
+    images = list(list(
+      source = map_background,
+      xref = "x",
+      yref = "y",
+      x = -183.5,
+      y = 181.3,
+      sizex = 366.1,
+      sizey = 243.7,
+      sizing = "stretch",
+      opacity = .4,
+      layer = "below"
+    ))
+  ) %>%
   config(scrollZoom = TRUE, displaylogo = FALSE) %>% 
   onRender(js) %>% toWebGL()
 ```
