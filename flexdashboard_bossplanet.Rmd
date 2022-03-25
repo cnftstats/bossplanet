@@ -1,5 +1,5 @@
 ---
-title: "CNFTSTATS - Boss Planet"
+title: "CNFTSTATS"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
@@ -59,6 +59,69 @@ js <- "function(el, x) {
     });
 }"
 
+js2 <- "function(el, x) {
+    var id = el.getAttribute('id');
+    var gd = document.getElementById(id);
+    var d3 = Plotly.d3;
+    Plotly.update(id).then(attach);
+    function attach() {
+        gd.addEventListener('mousemove', function(evt) {
+            var xaxis = gd._fullLayout.xaxis;
+            var yaxis = gd._fullLayout.yaxis;
+            var bb = evt.target.getBoundingClientRect();
+            var x = xaxis.p2d(evt.clientX - bb.left);
+            x = parseFloat(x).toFixed(0);
+            var y = yaxis.p2d(evt.clientY - bb.top);
+            y = parseFloat(y).toFixed(0);
+            var layout_update = {
+              annotations: [
+                {
+                  x: 0,
+                  y: -54,
+                  xref: 'x',
+                  yref: 'y',
+                  text: '(' + x + ', ' + y + ')',
+                  showarrow: false,
+                  font: {
+                    size: 14,
+                    color: '#b3b3b3',
+                  },
+                },
+              ]
+            }
+            Plotly.relayout(gd, layout_update);
+        });
+    };
+    el.on('plotly_click', function(d) {
+        var link = d.points[0].customdata;
+        window.open(link);
+    });
+}"
+
+
+js3 <- "function(el, x) {
+    var id = el.getAttribute('id');
+    var gd = document.getElementById(id);
+    var d3 = Plotly.d3;
+    Plotly.update(id).then(attach);
+    function attach() {
+        gd.addEventListener('mousemove', function(evt) {
+            var xaxis = gd._fullLayout.xaxis;
+            var yaxis = gd._fullLayout.yaxis;
+            var bb = evt.target.getBoundingClientRect();
+            var x = xaxis.p2d(evt.clientX - bb.left);
+            x = parseFloat(x).toFixed(0);
+            var y = yaxis.p2d(evt.clientY - bb.top);
+            y = parseFloat(y).toFixed(0);
+            Plotly.relayout(gd, 'xaxis.title', 'x: ' + x + '  y: ' + y);
+        });
+    };
+    el.on('plotly_click', function(d) {
+        var link = d.points[0].data.customdata[0];
+        window.open(link);
+    });
+}"
+
 
 # Functions
 loj <- function (X = NULL, Y = NULL, onCol = NULL) {
@@ -83,7 +146,7 @@ $(document).ready(function(){
 
 # Sidebar {data-width=80, .sidebar}
 <ul id="sidebar_ul">
-<li><a href="https://cnftstats.github.io/adapes">ApesSociety</a></li>
+<li><a href="https://cnftstats.github.io/adapes">ApeSociety</a></li>
 <li><a href="https://cnftstats.github.io/bcrc">BCRC</a></li>
 <li id="currentProject"><a href="https://cnftstats.github.io/bossplanet">BossPlanet</a></li>
 <li><a href="https://cnftstats.github.io/chilledkongs">ChilledKongs</a></li>
@@ -103,9 +166,13 @@ X[price %between% c(0, 999),     price_range := trunc(price/100)*100]
 X[price %between% c(1000, 4999), price_range := trunc(price/1000)*1000]
 X[price >= 5000,                 price_range := 5000]
 X <- X[complete.cases(price_range), .(price_range, price, market, district_txt)]
-CAP <- X[, .(floor = min(price), listings = .N), district_txt][order(district_txt)]
-.caption <- paste0(CAP[, sprintf("%s: Floor = %s | Listings = %d", district_txt, floor, listings)],
-                   collapse = "\n")
+CAP <- X[, .(floor = min(price), median = floor(median(price)),
+             listings = .N), district_txt][order(district_txt)]
+CAP_all <- X[, .(district_txt = "All", floor = min(price),
+                 median = floor(median(price)), listings = .N)]
+CAP <- rbind(CAP_all, CAP)
+.pattern <- "%s: Floor = %d | Median = %d | Listings = %d"
+.caption <- paste0(CAP[, sprintf(.pattern, district_txt, floor, median, listings)], collapse = "\n")
 X <- X[, .N, .(price_range, market, district_txt)][order(price_range)]
 X[price_range %between% c(0, 999),     x_label := paste0(price_range, "-", price_range + (100-1))]
 X[price_range %between% c(1000, 4999), x_label := paste0(price_range, "-", price_range + (1000-1))]
@@ -136,7 +203,7 @@ ggplot(X, aes(x_label, N, fill = market)) +
         panel.grid.minor = element_blank())
 ```
 
-> Warning: `Bundles` (multiple assets listed together) are excluded!
+> Warning: `Bundles` (multiple assets listed together) are excluded! The <a href="https://www.mathsisfun.com/median.html" target="_blank">median</a> is the 'middle point' of all the listing.
 
 ### Sales (last 24h)
 ```{r fig.height=7, fig.width=10}
@@ -236,7 +303,7 @@ datatable(X, class = 'compact stripe hover nowrap',
 <!--         panel.grid.major = element_line(colour = "grey80"), -->
 <!--         panel.background = element_rect(fill = 'transparent')) -->
 
-<!-- ggplotly(gg, tooltip = "text") %>% config(scrollZoom = TRUE) %>% onRender(js) -->
+<!-- ggplotly(gg, tooltip = "text") %>% config(scrollZoom = TRUE) %>% onRender(js3) -->
 <!-- ``` -->
 
 
@@ -248,44 +315,7 @@ datatable(X, class = 'compact stripe hover nowrap',
 <!-- # To do: -->
 <!-- # add_polygons (so can be zoomed) -->
 
-<!-- js2 <- "function(el, x) { -->
-<!--     var id = el.getAttribute('id'); -->
-<!--     var gd = document.getElementById(id); -->
-<!--     var d3 = Plotly.d3; -->
-<!--     Plotly.update(id).then(attach); -->
-<!--     function attach() { -->
-<!--         gd.addEventListener('mousemove', function(evt) { -->
-<!--             var xaxis = gd._fullLayout.xaxis; -->
-<!--             var yaxis = gd._fullLayout.yaxis; -->
-<!--             var bb = evt.target.getBoundingClientRect(); -->
-<!--             var x = xaxis.p2d(evt.clientX - bb.left); -->
-<!--             x = parseFloat(x).toFixed(0); -->
-<!--             var y = yaxis.p2d(evt.clientY - bb.top); -->
-<!--             y = parseFloat(y).toFixed(0); -->
-<!--             var layout_update = { -->
-<!--               annotations: [ -->
-<!--                 { -->
-<!--                   x: 0, -->
-<!--                   y: -54, -->
-<!--                   xref: 'x', -->
-<!--                   yref: 'y', -->
-<!--                   text: '(' + x + ', ' + y + ')', -->
-<!--                   showarrow: false, -->
-<!--                   font: { -->
-<!--                     size: 14, -->
-<!--                     color: '#b3b3b3', -->
-<!--                   }, -->
-<!--                 }, -->
-<!--               ] -->
-<!--             } -->
-<!--             Plotly.relayout(gd, layout_update); -->
-<!--         }); -->
-<!--     }; -->
-<!--     el.on('plotly_click', function(d) { -->
-<!--         var link = d.points[0].customdata; -->
-<!--         window.open(link); -->
-<!--     }); -->
-<!-- }" -->
+
 
 
 <!-- X <- copy(DT) -->
