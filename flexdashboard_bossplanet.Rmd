@@ -478,7 +478,7 @@ gg <- ggplot() +
         legend.text = element_text(size = 9)) +
   coord_fixed(xlim = c(-180, 180), ylim = c(-60, 180))
 
-ggplotly(gg, tooltip = "text") %>%
+ggplotly(gg, type = 'scattergl', tooltip = "text") %>%
   layout(
     xaxis = list(range = c(0, 1)),
     legend = list(x = 1, y = .4, bgcolor = 'rgba(255,255,255,0.6)'),
@@ -531,7 +531,7 @@ gg <- ggplot() +
         legend.text = element_text(size = 9)) +
   coord_fixed(xlim = c(-180, 180), ylim = c(-60, 180))
 
-ggplotly(gg, tooltip = "text") %>%
+ggplotly(gg, type = 'scattergl', tooltip = "text") %>%
   layout(
     xaxis = list(range = c(0, 1)),
     legend = list(x = 1, y = .4, bgcolor = 'rgba(255,255,255,0.6)'),
