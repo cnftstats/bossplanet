@@ -22,6 +22,7 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, comment = "", dev = "svglit
 library(flexdashboard)
 library(htmlwidgets)
 library(data.table)
+library(crosstalk)
 library(magrittr)
 library(ggplot2)
 library(svglite)
@@ -203,7 +204,7 @@ ggplot(X, aes(x_label, N, fill = market)) +
         panel.grid.minor = element_blank())
 ```
 
-> Warning: `Bundles` (multiple assets listed together) are excluded! The <a href="https://www.mathsisfun.com/median.html" target="_blank">median</a> is the 'middle point' of all the listing.
+> The <a href="https://www.mathsisfun.com/median.html" target="_blank">median</a> is the 'middle point' of all the listing.
 
 ### Sales (last 24h)
 ```{r fig.height=7, fig.width=10}
@@ -314,7 +315,7 @@ datatable(X, class = 'compact stripe hover nowrap',
 
 <!-- # To do: -->
 <!-- # add_polygons (so can be zoomed) -->
-
+<!-- # hoverlabl automatic color -->
 
 
 
@@ -335,13 +336,16 @@ datatable(X, class = 'compact stripe hover nowrap',
 <!--                         price >= .highest_prices, "High")] -->
 <!-- X[, show_price := factor(show_price, levels = c("Low", "Med", "High"))] -->
 
+<!-- shared <- SharedData$new(X) -->
 
 
-<!-- plot_ly( -->
-<!--   data = X, x = ~xcoord, y = ~ycoord, split = ~interaction(type, show_price), -->
+<!-- gg <- plot_ly( -->
+<!--   data = shared, x = ~xcoord, y = ~ycoord,  -->
+<!--   # split = ~interaction(type, show_price), -->
 <!--   customdata = ~link, -->
-<!--   type = "scatter", mode = "markers", -->
-<!--   text = ~paste0(paste("Price:", price, -->
+<!--   # hoverinfo = "text", -->
+<!--   type = "scattergl", mode = "markers", -->
+<!--   text = ~paste0(paste("Price:", round(price, 2), -->
 <!--                        "</br>District:", district, -->
 <!--                        "</br>Type:", type, -->
 <!--                        "</br>Market:", market)), -->
@@ -360,70 +364,86 @@ datatable(X, class = 'compact stripe hover nowrap',
 <!--       tickvals = c(0, 1), -->
 <!--       ticktext = c("Low", "High") -->
 <!--     ) -->
-<!--     # colorscale = "Jet" -->
 <!--   ) -->
-<!-- ) %>% layout( -->
-<!--   title = "", -->
-<!--   xaxis = list( -->
-<!--     title = list(text = ""), -->
-<!--     range = c(-181, 181), -->
-<!--     tickmode = "array", -->
-<!--     tickvals = c(-180, -60, 60, 180), -->
-<!--     ticktext = c("-180", "-60", "60", "180"), -->
-<!--     color = "#b3b3b3", -->
-<!--     gridcolor = "#cfcfcf", -->
-<!--     layer = "above traces", -->
-<!--     showline = FALSE, -->
-<!--     ticklabelposition = "outside", -->
-<!--     ticklen = 4, -->
-<!--     zeroline = FALSE -->
-<!--   ), -->
-<!--   yaxis = list( -->
-<!--     title = list(text = ""), -->
-<!--     range = c(-61, 181), -->
-<!--     tickmode = "array", -->
-<!--     tickvals = c(-60, 60, 180), -->
-<!--     ticktext = c("-60", "60", "180"), -->
-<!--     color = "#b3b3b3", -->
-<!--     gridcolor = "#cfcfcf", -->
-<!--     layer = "above traces", -->
-<!--     showline = FALSE, -->
-<!--     ticklabelposition = "outside", -->
-<!--     ticklen = 4, -->
-<!--     zeroline = FALSE -->
-<!--     # scaleanchor = "x", # to fix scale ratio so it is square. Pb: makes ticks disapear -->
-<!--     # scaleratio = 1 # to fix scale ratio so it is square. Pb: makes ticks disapear -->
-<!--   ), -->
-<!--   font = list( -->
-<!--     color = "grey", -->
-<!--     size = 12 -->
-<!--   ), -->
-<!--   legend = list( -->
-<!--     title = list(text = "Type"), -->
-<!--     x = 1 -->
-<!--   ), -->
-<!--   images = list(list( -->
-<!--     source = map_background, -->
-<!--     xref = "x", -->
-<!--     yref = "y", -->
-<!--     x = -183.5, -->
-<!--     y = 181.3, -->
-<!--     sizex = 366.1, -->
-<!--     sizey = 243.7, -->
-<!--     sizing = "stretch", -->
-<!--     opacity = .5, -->
-<!--     layer = "below" -->
-<!--   )), -->
-<!--   margin = list( -->
-<!--     autoexpand = FALSE, -->
-<!--     pad = 0, -->
-<!--     t = 15, -->
-<!--     r = 100, -->
-<!--     b = 30, -->
-<!--     l = 35 -->
-<!--   )) %>% -->
+<!-- ) %>%  -->
+<!--   layout( -->
+<!--     title = "", -->
+<!--     xaxis = list( -->
+<!--       title = list(text = ""), -->
+<!--       range = c(-181, 181), -->
+<!--       tickmode = "array", -->
+<!--       tickvals = c(-180, -60, 60, 180), -->
+<!--       ticktext = c("-180", "-60", "60", "180"), -->
+<!--       color = "#b3b3b3", -->
+<!--       gridcolor = "#cfcfcf", -->
+<!--       layer = "above traces", -->
+<!--       showline = FALSE, -->
+<!--       ticklabelposition = "outside", -->
+<!--       ticklen = 4, -->
+<!--       zeroline = FALSE -->
+<!--     ), -->
+<!--     yaxis = list( -->
+<!--       title = list(text = ""), -->
+<!--       range = c(-61, 181), -->
+<!--       tickmode = "array", -->
+<!--       tickvals = c(-60, 60, 180), -->
+<!--       ticktext = c("-60", "60", "180"), -->
+<!--       color = "#b3b3b3", -->
+<!--       gridcolor = "#cfcfcf", -->
+<!--       layer = "above traces", -->
+<!--       showline = FALSE, -->
+<!--       ticklabelposition = "outside", -->
+<!--       ticklen = 4, -->
+<!--       zeroline = FALSE -->
+<!--       # scaleanchor = "x", # to fix scale ratio so it is square. Pb: makes ticks disapear -->
+<!--       # scaleratio = 1 # to fix scale ratio so it is square. Pb: makes ticks disapear -->
+<!--     ), -->
+<!--     font = list( -->
+<!--       color = "grey", -->
+<!--       size = 12 -->
+<!--     ), -->
+<!--     legend = list( -->
+<!--       title = list(text = "Type"), -->
+<!--       x = 1 -->
+<!--     ), -->
+<!--     images = list(list( -->
+<!--       source = map_background, -->
+<!--       xref = "x", -->
+<!--       yref = "y", -->
+<!--       x = -183.5, -->
+<!--       y = 181.3, -->
+<!--       sizex = 366.1, -->
+<!--       sizey = 243.7, -->
+<!--       sizing = "stretch", -->
+<!--       opacity = .5, -->
+<!--       layer = "below" -->
+<!--     )), -->
+<!--     margin = list( -->
+<!--       autoexpand = FALSE, -->
+<!--       pad = 0, -->
+<!--       t = 15, -->
+<!--       r = 100, -->
+<!--       b = 30, -->
+<!--       l = 35 -->
+<!--     )) %>% -->
 <!--   config(scrollZoom = TRUE, displaylogo = FALSE) %>% -->
 <!--   onRender(js2) -->
+
+<!-- crosstalk::bscols( -->
+<!--   widths = c(11, 1), -->
+<!--   gg, -->
+<!--   list( -->
+<!--     crosstalk::filter_checkbox("show_price",  -->
+<!--                                label = "show_price", -->
+<!--                                sharedData = shared,  -->
+<!--                                group = ~show_price), -->
+<!--     crosstalk::filter_checkbox("type",  -->
+<!--                                label = "type", -->
+<!--                                sharedData = shared,  -->
+<!--                                group = ~type) -->
+<!--   ) -->
+<!-- ) -->
+
 <!-- ``` -->
 
 ### Listings
@@ -465,7 +485,7 @@ gg <- ggplot() +
                         breaks = 0:1, labels = c("Low", "High"), limits = 0:1) +
   scale_x_continuous(breaks = c(-180, -60, +60, +180), expand = c(0.01, 0.01)) +
   scale_y_continuous(breaks = c(-180, -60, +60, +180), expand = c(0.01, 0.01)) +
-  scale_shape_manual(name = "Filter", values = c("listing" = 16, "bundle" = 17)) +
+  scale_shape_manual(name = "Filter", values = c("Listing" = 16, "Bundle" = 17)) +
   scale_alpha_manual(name = " ", values = rep(1, length(unique(X$show_price)))) +
   labs(color = "Price", x = "", y = "") +
   theme(panel.grid.minor = element_blank(),
@@ -474,7 +494,6 @@ gg <- ggplot() +
         legend.title = element_text(size = 11),
         legend.text = element_text(size = 9)) +
   coord_fixed(xlim = c(-180, 180), ylim = c(-60, 180))
-
 
 ggplotly(gg, tooltip = "text") %>%
   layout(
@@ -504,8 +523,10 @@ ggplotly(gg, tooltip = "text") %>%
 X <- DTS[sold_at_hours <= 24]
 X[, sold_time := sprintf("%.fh ago", sold_at_hours)]
 
+X[, type := factor(type, levels = c("listing", "bundle"), labels = c("Listing", "Bundle"))]
+
 gg <- ggplot() +
-  geom_point(data = X, 
+  geom_point(data = X,
              aes(x = xcoord, y = ycoord, color = price_rank, shape = type,
                  text = paste0(asset,
                                "</br></br>", paste("Price:", price,
@@ -518,7 +539,7 @@ gg <- ggplot() +
                         breaks = 0:1, labels = c("Low", "High"), limits = 0:1) +
   scale_x_continuous(breaks = c(-180, -60, +60, +180), expand = c(0.01, 0.01)) +
   scale_y_continuous(breaks = c(-180, -60, +60, +180), expand = c(0.01, 0.01)) +
-  scale_shape_manual(name = "Filter", values = c("listing" = 16, "bundle" = 17)) +
+  scale_shape_manual(name = "Filter", values = c("Listing" = 16, "Bundle" = 17)) +
   labs(color = "Price", x = "", y = "") +
   theme(panel.grid.minor = element_blank(),
         panel.grid.major = element_line(colour = "grey80"),
@@ -545,7 +566,7 @@ ggplotly(gg, tooltip = "text") %>%
       layer = "below"
     ))
   ) %>%
-  config(scrollZoom = TRUE, displaylogo = FALSE) %>% 
+  config(scrollZoom = TRUE, displaylogo = FALSE) %>%
   onRender(js) %>% toWebGL()
 ```
 
@@ -577,7 +598,7 @@ cat(CAP)
 ```
 
 
-# Buy me a coffee {data-icon="ion-coffee"}
+# Buy me a coffee (Thanks for the tip kind stranger!) {data-icon="ion-coffee"}
 ## Column 1
 ### Thanks for your support!
 Tips would be greatly appreciated! This would encourage me to maintain and improve the website (for instance, to get a better hosting service).  

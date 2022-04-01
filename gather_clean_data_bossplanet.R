@@ -198,7 +198,7 @@ JPGS[, ycoord         := extract_num(strsplit(asset, ",")[[1]][2]), 1:nrow(JPGS)
 
 loj(JPGS, RAR[, .(asset_id, district, xcoord, ycoord)], "asset_id")
 
-JPGS <- JPGS[order(-sold_at), .(asset, type = "listings", price, district,
+JPGS <- JPGS[order(-sold_at), .(asset, type = "listing", price, district,
                                 sold_at, sold_at_hours, sold_at_days, market, xcoord, ycoord)]
 JPGS <- JPGS[sold_at_hours <= 24]
 
