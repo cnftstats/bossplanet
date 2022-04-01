@@ -22,7 +22,6 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, comment = "", dev = "svglit
 library(flexdashboard)
 library(htmlwidgets)
 library(data.table)
-library(crosstalk)
 library(magrittr)
 library(ggplot2)
 library(svglite)
@@ -300,6 +299,9 @@ datatable(X, class = 'compact stripe hover nowrap',
 <!--   geom_tile(aes(xcoord, ycoord, fill = price_rank)) + -->
 <!--   scale_x_continuous(breaks = c(-180, -60, +60, +180), expand = c(0.01, 0.01)) + -->
 <!--   scale_y_continuous(breaks = c(-180, -60, +60, +180), expand = c(0.01, 0.01)) + -->
+<!--   scale_fill_gradient2(low = 'steelblue3', mid = "goldenrod1", midpoint = .5, high = 'red', -->
+<!--                         na.value = "grey90", -->
+<!--                         breaks = 0:1, labels = c("Low", "High"), limits = 0:1) + -->
 <!--   labs(color = "Price", x = "", y = "") + -->
 <!--   theme(panel.grid.minor = element_blank(), -->
 <!--         panel.grid.major = element_line(colour = "grey80"), -->
@@ -319,7 +321,6 @@ datatable(X, class = 'compact stripe hover nowrap',
 <!-- # hoverlabl automatic color -->
 
 
-
 <!-- X <- copy(DT) -->
 
 <!-- percent_high_low <- 15 -->
@@ -337,12 +338,9 @@ datatable(X, class = 'compact stripe hover nowrap',
 <!--                         price >= .highest_prices, "High")] -->
 <!-- X[, show_price := factor(show_price, levels = c("Low", "Med", "High"))] -->
 
-<!-- shared <- SharedData$new(X) -->
-
-
-<!-- gg <- plot_ly( -->
-<!--   data = shared, x = ~xcoord, y = ~ycoord,  -->
-<!--   # split = ~interaction(type, show_price), -->
+<!-- plot_ly( -->
+<!--   data = X, x = ~xcoord, y = ~ycoord, -->
+<!--   split = ~interaction(type, show_price), -->
 <!--   customdata = ~link, -->
 <!--   # hoverinfo = "text", -->
 <!--   type = "scattergl", mode = "markers", -->
@@ -366,7 +364,7 @@ datatable(X, class = 'compact stripe hover nowrap',
 <!--       ticktext = c("Low", "High") -->
 <!--     ) -->
 <!--   ) -->
-<!-- ) %>%  -->
+<!-- ) %>% -->
 <!--   layout( -->
 <!--     title = "", -->
 <!--     xaxis = list( -->
@@ -395,9 +393,9 @@ datatable(X, class = 'compact stripe hover nowrap',
 <!--       showline = FALSE, -->
 <!--       ticklabelposition = "outside", -->
 <!--       ticklen = 4, -->
-<!--       zeroline = FALSE -->
+<!--       zeroline = FALSE, -->
 <!--       # scaleanchor = "x", # to fix scale ratio so it is square. Pb: makes ticks disapear -->
-<!--       # scaleratio = 1 # to fix scale ratio so it is square. Pb: makes ticks disapear -->
+<!--       scaleratio = 1 # to fix scale ratio so it is square. Pb: makes ticks disapear -->
 <!--     ), -->
 <!--     font = list( -->
 <!--       color = "grey", -->
@@ -429,22 +427,6 @@ datatable(X, class = 'compact stripe hover nowrap',
 <!--     )) %>% -->
 <!--   config(scrollZoom = TRUE, displaylogo = FALSE) %>% -->
 <!--   onRender(js2) -->
-
-<!-- crosstalk::bscols( -->
-<!--   widths = c(11, 1), -->
-<!--   gg, -->
-<!--   list( -->
-<!--     crosstalk::filter_checkbox("show_price",  -->
-<!--                                label = "show_price", -->
-<!--                                sharedData = shared,  -->
-<!--                                group = ~show_price), -->
-<!--     crosstalk::filter_checkbox("type",  -->
-<!--                                label = "type", -->
-<!--                                sharedData = shared,  -->
-<!--                                group = ~type) -->
-<!--   ) -->
-<!-- ) -->
-
 <!-- ``` -->
 
 ### Listings
@@ -493,11 +475,12 @@ gg <- ggplot() +
         panel.grid.major = element_line(colour = "grey80"),
         panel.background = element_rect(fill = 'transparent'),
         legend.title = element_text(size = 11),
-        legend.text = element_text(size = 9))
+        legend.text = element_text(size = 9)) +
+  coord_fixed(xlim = c(-180, 180), ylim = c(-60, 180))
 
 ggplotly(gg, tooltip = "text") %>%
   layout(
-    # xaxis = list(range = c(0, 1)),
+    xaxis = list(range = c(0, 1)),
     legend = list(x = 1, y = .4, bgcolor = 'rgba(255,255,255,0.6)'),
     images = list(list(
       source = map_background,
@@ -545,11 +528,12 @@ gg <- ggplot() +
         panel.grid.major = element_line(colour = "grey80"),
         panel.background = element_rect(fill = 'transparent'),
         legend.title = element_text(size = 11),
-        legend.text = element_text(size = 9))
+        legend.text = element_text(size = 9)) +
+  coord_fixed(xlim = c(-180, 180), ylim = c(-60, 180))
 
 ggplotly(gg, tooltip = "text") %>%
   layout(
-    # xaxis = list(range = c(0, 1)),
+    xaxis = list(range = c(0, 1)),
     legend = list(x = 1, y = .4, bgcolor = 'rgba(255,255,255,0.6)'),
     images = list(list(
       source = map_background,
@@ -565,7 +549,7 @@ ggplotly(gg, tooltip = "text") %>%
     ))
   ) %>%
   config(scrollZoom = TRUE, displaylogo = FALSE) %>%
-  onRender(js)
+  onRender(js) %>% toWebGL()
 ```
 
 > Click and drag your mouse to zoom. You can zoom-in/out with your mouse wheel. Grey areas are minted lands. I have no clue what the white areas are.
