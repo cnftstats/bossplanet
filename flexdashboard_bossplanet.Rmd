@@ -492,8 +492,7 @@ gg <- ggplot() +
         panel.grid.major = element_line(colour = "grey80"),
         panel.background = element_rect(fill = 'transparent'),
         legend.title = element_text(size = 11),
-        legend.text = element_text(size = 9)) +
-  coord_fixed(xlim = c(-180, 180), ylim = c(-60, 180))
+        legend.text = element_text(size = 9))
 
 ggplotly(gg, tooltip = "text") %>%
   layout(
@@ -545,9 +544,7 @@ gg <- ggplot() +
         panel.grid.major = element_line(colour = "grey80"),
         panel.background = element_rect(fill = 'transparent'),
         legend.title = element_text(size = 11),
-        legend.text = element_text(size = 9)) +
-  coord_fixed(xlim = c(-180, 180), ylim = c(-60, 180))
-
+        legend.text = element_text(size = 9))
 
 ggplotly(gg, tooltip = "text") %>%
   layout(
