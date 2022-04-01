@@ -496,7 +496,7 @@ gg <- ggplot() +
 
 ggplotly(gg, tooltip = "text") %>%
   layout(
-    xaxis = list(range = c(0, 1)),
+    # xaxis = list(range = c(0, 1)),
     legend = list(x = 1, y = .4, bgcolor = 'rgba(255,255,255,0.6)'),
     images = list(list(
       source = map_background,
@@ -548,7 +548,7 @@ gg <- ggplot() +
 
 ggplotly(gg, tooltip = "text") %>%
   layout(
-    xaxis = list(range = c(0, 1)),
+    # xaxis = list(range = c(0, 1)),
     legend = list(x = 1, y = .4, bgcolor = 'rgba(255,255,255,0.6)'),
     images = list(list(
       source = map_background,
