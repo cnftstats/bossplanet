@@ -272,6 +272,7 @@ datatable(X, class = 'compact stripe hover nowrap',
 
 # Map {data-icon="ion-android-map"}
 ## Column 1 {data-width=500, .tabset}
+
 <!-- ### Tiles -->
 <!-- ```{r} -->
 <!-- # XRAR <- RAR[!asset %in% DT$asset] -->
@@ -564,7 +565,7 @@ ggplotly(gg, tooltip = "text") %>%
     ))
   ) %>%
   config(scrollZoom = TRUE, displaylogo = FALSE) %>%
-  onRender(js) %>% toWebGL()
+  onRender(js)
 ```
 
 > Click and drag your mouse to zoom. You can zoom-in/out with your mouse wheel. Grey areas are minted lands. I have no clue what the white areas are.
