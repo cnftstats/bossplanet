@@ -159,6 +159,7 @@ while (TRUE) {
   X <- data.table(fromJSON(rawToChar(GET(api_link)$content)))
   if (nrow(X) == 0) break
   JPG_list[[p]] <- X
+  X[, page := p]
   p <- p + 1
 }
 
@@ -213,6 +214,10 @@ DTS <- rbindlist(list(CNFTS, JPGS), fill = TRUE, use.names = TRUE)
 # Add data collection timestamp
 DT[, data_date := time_now]
 DTS[, data_date := time_now]
+
+# Fix bug with listing call returning many times the same asset (JPG)
+DT <- DT[!duplicated(asset)]
+DTS <- DTS[!duplicated(asset)]
 
 
 # Add districs -------------------------------------------------------------------------------------

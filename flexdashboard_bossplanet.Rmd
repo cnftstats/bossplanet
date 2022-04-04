@@ -270,7 +270,7 @@ datatable(X, class = 'compact stripe hover nowrap',
 ```
 
 # Map {data-icon="ion-android-map"}
-## Column 1 {data-width=500, .tabset}
+## Column 1 {.tabset}
 
 <!-- ### Tiles -->
 <!-- ```{r} -->
@@ -318,7 +318,7 @@ datatable(X, class = 'compact stripe hover nowrap',
 
 <!-- # To do: -->
 <!-- # add_polygons (so can be zoomed) -->
-<!-- # hoverlabl automatic color -->
+<!-- # hoverlabel background incorrect color! -->
 
 
 <!-- X <- copy(DT) -->
@@ -333,43 +333,58 @@ datatable(X, class = 'compact stripe hover nowrap',
 <!-- .highest_prices <- .highest_prices[1:(floor(length(.highest_prices)*percent_high_low/100))] -->
 <!-- .highest_prices <- min(.highest_prices) -->
 
-<!-- X[, show_price := fcase(price <= .lowest_prices, "Low", -->
-<!--                         price > .lowest_prices & price < .highest_prices, "Med", -->
-<!--                         price >= .highest_prices, "High")] -->
-<!-- X[, show_price := factor(show_price, levels = c("Low", "Med", "High"))] -->
+<!-- X[, pricelvl := fcase(price <= .lowest_prices, "Low", -->
+<!--                       price > .lowest_prices & price < .highest_prices, "Med", -->
+<!--                       price >= .highest_prices, "High")] -->
+<!-- X[, pricelvl := factor(pricelvl, levels = c("Low", "Med", "High"))] -->
+
+<!-- X[, type := factor(type, levels = c("listing", "bundle"), -->
+<!--                    labels = c("listing" = "Listing", "bundle" = "Bundle"))] -->
+
+<!-- X[, type_pricelvl := factor(paste0(type, "-", pricelvl), -->
+<!--                             levels = c("Listing-Low", "Listing-Med", "Listing-High", -->
+<!--                                        "Bundle-Low", "Bundle-Med", "Bundle-High"))] -->
+
+<!-- # Fix hoverlabel bgcolor (not working with WebGL) -->
+<!-- X <- X[order(type_pricelvl)] -->
+<!-- length_unique_vals <- length(unique(X$price)) -->
+<!-- .colors <- colorRampPalette(c('#0d71db', "#dbc00d", "#db220d"))(length_unique_vals) -->
+<!-- .colors <- .colors[factor(X$price)] -->
+<!-- X[, price_color := .colors] -->
 
 <!-- plot_ly( -->
 <!--   data = X, x = ~xcoord, y = ~ycoord, -->
-<!--   split = ~interaction(type, show_price), -->
-<!--   customdata = ~link, -->
-<!--   # hoverinfo = "text", -->
 <!--   type = "scattergl", mode = "markers", -->
-<!--   text = ~paste0(paste("Price:", round(price, 2), -->
-<!--                        "</br>District:", district, -->
-<!--                        "</br>Type:", type, -->
-<!--                        "</br>Market:", market)), -->
+<!--   split = ~type_pricelvl, -->
+<!--   customdata = ~link, -->
+<!--   text = ~paste0("</br>(", xcoord, ", ", ycoord, ")", -->
+<!--                  "</br>", round(price, 2), " ada", -->
+<!--                  "</br>D", district, -->
+<!--                  "</br>", type, -->
+<!--                  "</br>", market), -->
+<!--   hoverinfo = "text", -->
+<!--   hoverlabel = list(bgcolor = .colors), -->
+<!--   color = ~price_rank, -->
+<!--   colors = c('#0d71db', "#dbc00d", "#db220d"), -->
 <!--   marker = list( -->
-<!--     size = 3, -->
-<!--     color = ~price_rank, -->
-<!--     colorscale = list(c(0, .5, 1), c('#0d71db', "#dbc00d", "#db220d")), -->
-<!--     colorbar = list( -->
-<!--       title = list(text = "Price"), -->
-<!--       len = .5, # length of the color bar -->
-<!--       x = 1, -->
-<!--       y = .25, -->
-<!--       outlinewidth = .5, -->
-<!--       thickness = 15, -->
-<!--       tickmode = "array", -->
-<!--       tickvals = c(0, 1), -->
-<!--       ticktext = c("Low", "High") -->
-<!--     ) -->
-<!--   ) -->
-<!-- ) %>% -->
+<!--     size = 3 -->
+<!--   )) %>% -->
+<!--   colorbar( -->
+<!--     title = list(text = "Price"), -->
+<!--     len = .35, # length of the color bar -->
+<!--     x = 1, -->
+<!--     y = 1, -->
+<!--     outlinewidth = .5, -->
+<!--     thickness = 15, -->
+<!--     tickmode = "array", -->
+<!--     tickvals = c(0, 1), -->
+<!--     ticktext = c("Low", "High") -->
+<!--   ) %>%  -->
 <!--   layout( -->
 <!--     title = "", -->
 <!--     xaxis = list( -->
 <!--       title = list(text = ""), -->
-<!--       range = c(-181, 181), -->
+<!--       range = c(0, 1), -->
 <!--       tickmode = "array", -->
 <!--       tickvals = c(-180, -60, 60, 180), -->
 <!--       ticktext = c("-180", "-60", "60", "180"), -->
@@ -394,16 +409,18 @@ datatable(X, class = 'compact stripe hover nowrap',
 <!--       ticklabelposition = "outside", -->
 <!--       ticklen = 4, -->
 <!--       zeroline = FALSE, -->
-<!--       # scaleanchor = "x", # to fix scale ratio so it is square. Pb: makes ticks disapear -->
-<!--       scaleratio = 1 # to fix scale ratio so it is square. Pb: makes ticks disapear -->
+<!--       scaleanchor = "x", # to fix scale ratio so it is square -->
+<!--       scaleratio = 1 # to fix scale ratio so it is square -->
 <!--     ), -->
 <!--     font = list( -->
 <!--       color = "grey", -->
-<!--       size = 12 -->
+<!--       size = 11 -->
 <!--     ), -->
 <!--     legend = list( -->
+<!--       x = 1, -->
+<!--       y = .4, -->
 <!--       title = list(text = "Type"), -->
-<!--       x = 1 -->
+<!--       font = list(size = 9) -->
 <!--     ), -->
 <!--     images = list(list( -->
 <!--       source = map_background, -->
@@ -418,15 +435,17 @@ datatable(X, class = 'compact stripe hover nowrap',
 <!--       layer = "below" -->
 <!--     )), -->
 <!--     margin = list( -->
-<!--       autoexpand = FALSE, -->
+<!--       autoexpand = TRUE, -->
 <!--       pad = 0, -->
 <!--       t = 15, -->
-<!--       r = 100, -->
-<!--       b = 30, -->
-<!--       l = 35 -->
-<!--     )) %>% -->
+<!--       # r = 100, -->
+<!--       # b = 30, -->
+<!--       l = 100 -->
+<!--     ) -->
+<!--   ) %>% -->
 <!--   config(scrollZoom = TRUE, displaylogo = FALSE) %>% -->
-<!--   onRender(js2) -->
+<!--   onRender(js2) %>% -->
+<!--   toWebGL() %>% partial_bundle(local = FALSE) -->
 <!-- ``` -->
 
 ### Listings
@@ -482,6 +501,7 @@ ggplotly(gg, type = 'scattergl', tooltip = "text") %>%
   layout(
     xaxis = list(range = c(0, 1)),
     legend = list(x = 1, y = .4, bgcolor = 'rgba(255,255,255,0.6)'),
+    hoverdistance = 10,
     images = list(list(
       source = map_background,
       xref = "x",
