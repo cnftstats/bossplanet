@@ -451,7 +451,7 @@ datatable(X, class = 'compact stripe hover nowrap',
 ### Listings
 ```{r}
 map_background <- paste0("https://raw.githubusercontent.com/cnftstats/bossplanet/",
-                         "main/map_background_new.png?raw=true")
+                         "main/map_background.png?raw=true")
 
 X <- copy(DT)
 
