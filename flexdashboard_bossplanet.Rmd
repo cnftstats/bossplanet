@@ -121,15 +121,6 @@ js3 <- "function(el, x) {
         window.open(link);
     });
 }"
-
-
-# Functions
-loj <- function (X = NULL, Y = NULL, onCol = NULL) {
-  if (truelength(X) == 0 | truelength(Y) == 0) 
-    stop("setDT(X) and setDT(Y) first")
-  n <- names(Y)
-  X[Y, `:=`((n), mget(paste0("i.", n))), on = onCol]
-}
 ```
 
 <!-- Add live timestamp -->
@@ -531,7 +522,7 @@ X[, sold_time := sprintf("%.fh ago", sold_at_hours)]
 X[, type := factor(type, levels = c("listing", "bundle"), labels = c("Listing", "Bundle"))]
 
 gg <- ggplot() +
-  geom_point(data = X,
+  geom_point(data = X, 
              aes(x = xcoord, y = ycoord, color = price_rank, shape = type,
                  text = paste0("(", xcoord, ", ", ycoord, ")",
                                "</br></br>", paste0(round(price, 2), " ada",
@@ -542,35 +533,39 @@ gg <- ggplot() +
   scale_color_gradient2(low = 'steelblue3', mid = "goldenrod1", midpoint = .5, high = 'red',
                         na.value = "grey90",
                         breaks = 0:1, labels = c("Low", "High"), limits = 0:1) +
-  scale_x_continuous(breaks = c(-180, -60, +60, +180), expand = c(0.01, 0.01)) +
-  scale_y_continuous(breaks = c(-180, -60, +60, +180), expand = c(0.01, 0.01)) +
+  scale_x_continuous(expand = c(0.0005, 0.0005)) +
+  scale_y_continuous(expand = c(0.0005, 0.0005)) +
   scale_shape_manual(name = "Filter", values = c("Listing" = 16, "Bundle" = 17)) +
   labs(color = "Price", x = "", y = "") +
   theme(panel.grid.minor = element_blank(),
-        panel.grid.major = element_line(colour = "grey80"),
+        panel.grid.major = element_blank(),
         panel.background = element_rect(fill = 'transparent'),
+        axis.ticks = element_blank(),
+        axis.text = element_blank(),
+        axis.title.x = element_text(size = 11, color = "grey40"),
         legend.title = element_text(size = 11),
-        legend.text = element_text(size = 9)) +
-  coord_fixed(xlim = c(-180, 180), ylim = c(-60, 180))
+        legend.text = element_text(size = 9, color = "grey40")) +
+  coord_fixed(xlim = c(-181, 180), ylim = c(-61, 180))
 
 ggplotly(gg, type = 'scattergl', tooltip = "text") %>%
   layout(
     xaxis = list(range = c(0, 1)),
     legend = list(x = 1, y = .4, bgcolor = 'rgba(255,255,255,0.6)'),
+    hoverdistance = 10,
     images = list(list(
       source = map_background,
       xref = "x",
       yref = "y",
-      x = -183.5,
-      y = 181.3,
-      sizex = 366.1,
-      sizey = 243.7,
+      x = -180.71,
+      y = 179.63,
+      sizex = 360.41,
+      sizey = 240.26,
       sizing = "stretch",
       opacity = .4,
       layer = "below"
     ))
   ) %>%
-  config(scrollZoom = TRUE, displaylogo = FALSE) %>%
+  config(scrollZoom = TRUE, displaylogo = FALSE) %>% 
   onRender(js) %>% toWebGL() %>% partial_bundle(local = FALSE)
 ```
 
