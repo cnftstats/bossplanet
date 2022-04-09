@@ -571,8 +571,8 @@ ggplotly(gg, type = 'scattergl', tooltip = "text") %>%
 
 > Click and drag your mouse to zoom. You can zoom-in/out with your mouse wheel. Grey areas are minted lands. I have no clue what the white areas are.
 
-### Plot lands
-<iframe src="https://cnftstats.github.io/bossplanet/plot_lands" style="height:100%;width:100%;border:none;" title="plot_lands"></iframe>
+<!-- ### Plot lands -->
+<!-- <iframe src="https://cnftstats.github.io/bossplanet/plot_lands" style="height:100%;width:100%;border:none;" title="plot_lands"></iframe> -->
 
 ### Minted
 ```{r fig.height=10}
