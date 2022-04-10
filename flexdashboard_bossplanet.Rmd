@@ -597,7 +597,7 @@ cat(CAP)
 ```
 
 
-# Buy me a coffee {data-icon="ion-coffee"}
+# Buy me a coffee (Thaaaaaaank youuuuuu! <3) {data-icon="ion-coffee"}
 ## Column 1
 ### Thanks for your support!
 Tips would be greatly appreciated! This would encourage me to maintain and improve the website (for instance, to get a better hosting service).  
