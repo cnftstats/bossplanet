@@ -9,7 +9,6 @@ concurrency: build-dashboard
 
 jobs: 
   genDashboard:
-    # The type of runner that the job will run on
     runs-on: macOS-latest
     timeout-minutes: 25
 
@@ -32,7 +31,7 @@ jobs:
     
     # Remove the if statement the first time you run it!
     - name: Install packages
-      # if: steps.cache.outputs.cache-hit != 'true'
+      if: steps.cache.outputs.cache-hit != 'true'
       run: |
         install.packages(c("data.table", "lubridate", "httr", "jsonlite", "rvest", "flexdashboard",
         "htmlwidgets", "magrittr", "svglite", "ggplot2", "plotly", "tidyr", "DT", "rvest"))
