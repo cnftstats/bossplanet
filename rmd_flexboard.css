@@ -12,6 +12,21 @@ table.dataTable thead th {
 
 }
 
+/* Black and white BossPlanet map checkbox */
+#checkbox_map_div {
+  position: fixed;
+  bottom: 37%;
+  right: 4.3%;
+}
+
+#checkbox_map_label {
+  font-size: 14px;
+  color: #5c5c5c;
+  font-weight: normal;
+  padding-bottom: 5px;
+}
+
+/* Side bar project list */
 #currentProject, #currentProject:hover {
   font-weight: bold !important;
   background-color: rgba(104, 53, 129, 0.1) !important;
@@ -66,7 +81,6 @@ table.dataTable thead th {
 }
 
 /* TIP ME */
-
 #navbar > ul.nav.navbar-nav.navbar-left > li:nth-child(3) > a {
   -webkit-animation: color 30s infinite;
   -moz-animation: color 30s infinite;

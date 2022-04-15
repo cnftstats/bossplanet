@@ -53,9 +53,44 @@ js <- "function(el, x) {
             Plotly.relayout(gd, 'xaxis.title', '(' + x + ', ' + y + ')');
         });
     };
+    
     el.on('plotly_click', function(d) {
         var link = d.points[0].customdata;
         window.open(link);
+    });
+    
+    document.getElementById('checkbox_map').addEventListener('change', function(event) {
+      let map_bg = '';
+      if (event.currentTarget.checked) {
+        map_bg = 'https://raw.githubusercontent.com' +
+                 '/cnftstats/bossplanet/main/' +
+                 'map_background_bw.png?raw=true'
+        console.log('checked');
+      } else {
+        map_bg = 'https://raw.githubusercontent.com' +
+                 '/cnftstats/bossplanet/main/' +
+                 'map_background.png?raw=true'
+        console.log('unchecked');
+      };
+      console.log(map_bg);
+
+      let layout_update = {
+        images: [
+          {
+            source: map_bg,
+            xref: 'x',
+            yref: 'y',
+            x: -180.71,
+            y: 179.63,
+            sizex: 360.41,
+            sizey: 240.26,
+            sizing: 'stretch',
+            opacity: .4,
+            layer: 'below'
+          }
+        ]
+      }
+      Plotly.relayout(gd, layout_update);
     });
 }"
 
@@ -129,11 +164,12 @@ timestamp <- as.numeric(Sys.time())
 cat("
 <script>
 $(document).ready(function(){
-  $('.navbar-author').after('</br><span id=", '"updatedat"', ">Updated: <span data-livestamp=", '"', timestamp, '"', "></span></span>');
+  $('.navbar-author').after('</br><span id=\"updatedat\">Updated: <span data-livestamp=\"", timestamp, "\"></span></span>');
 });
 </script>
 ", sep = "")
 ```
+
 
 # Sidebar {data-width=80, .sidebar}
 <ul id="sidebar_ul">
@@ -370,7 +406,7 @@ datatable(X, class = 'compact stripe hover nowrap',
 <!--     tickmode = "array", -->
 <!--     tickvals = c(0, 1), -->
 <!--     ticktext = c("Low", "High") -->
-<!--   ) %>%  -->
+<!--   ) %>% -->
 <!--   layout( -->
 <!--     title = "", -->
 <!--     xaxis = list( -->
@@ -439,6 +475,7 @@ datatable(X, class = 'compact stripe hover nowrap',
 <!--   toWebGL() %>% partial_bundle(local = FALSE) -->
 <!-- ``` -->
 
+
 ### Listings
 ```{r}
 map_background <- paste0("https://raw.githubusercontent.com/cnftstats/bossplanet/",
@@ -469,9 +506,9 @@ gg <- ggplot() +
                  alpha = show_price,
                  text = paste0("(", xcoord, ", ", ycoord, ")",
                                "</br></br>", paste0(round(price, 2), " ada",
-                                                   "</br>D", district,
-                                                   "</br>", type,
-                                                   "</br>", market))), size = .6) +
+                                                    "</br>D", district,
+                                                    "</br>", type,
+                                                    "</br>", market))), size = .6) +
   scale_color_gradient2(low = 'steelblue3', mid = "goldenrod1", midpoint = .5, high = 'red',
                         na.value = "grey90",
                         breaks = 0:1, labels = c("Low", "High"), limits = 0:1) +
@@ -512,7 +549,14 @@ ggplotly(gg, type = 'scattergl', tooltip = "text") %>%
   onRender(js) %>% toWebGL() %>% partial_bundle(local = FALSE)
 ```
 
+<div id="checkbox_map_div">
+  <input type="checkbox" id="checkbox_map" name="checkbox_map">
+  <label for="checkbox_map" id="checkbox_map_label"> B&W map</label>
+</div>
+
 > Click on the data points to open the listings. Zoom-in/out with your mouse wheel. <b><span style='color:red'>Double click on the `(Listing,Low)` legend to display only the lowest listings.</span></b>
+
+
 
 ### Sales (last 24h)
 ```{r}
@@ -526,10 +570,10 @@ gg <- ggplot() +
              aes(x = xcoord, y = ycoord, color = price_rank, shape = type,
                  text = paste0("(", xcoord, ", ", ycoord, ")",
                                "</br></br>", paste0(round(price, 2), " ada",
-                                                   "</br>D", district,
-                                                   "</br>", type,
-                                                   "</br>", sold_time,
-                                                   "</br>", market))), size = .6) +
+                                                    "</br>D", district,
+                                                    "</br>", type,
+                                                    "</br>", sold_time,
+                                                    "</br>", market))), size = .6) +
   scale_color_gradient2(low = 'steelblue3', mid = "goldenrod1", midpoint = .5, high = 'red',
                         na.value = "grey90",
                         breaks = 0:1, labels = c("Low", "High"), limits = 0:1) +
@@ -597,7 +641,7 @@ cat(CAP)
 ```
 
 
-# Buy me a coffee (Thaaaaaaank youuuuuu! <3) {data-icon="ion-coffee"}
+# Buy me a coffee {data-icon="ion-coffee"}
 ## Column 1
 ### Thanks for your support!
 Tips would be greatly appreciated! This would encourage me to maintain and improve the website (for instance, to get a better hosting service).  
