@@ -173,15 +173,16 @@ $(document).ready(function(){
 
 # Sidebar {data-width=80, .sidebar}
 <ul id="sidebar_ul">
-<li><a href="https://cnftstats.github.io/adapes">ApeSociety</a></li>
-<li><a href="https://cnftstats.github.io/bcrc">BCRC</a></li>
-<li id="currentProject"><a href="https://cnftstats.github.io/bossplanet">BossPlanet</a></li>
-<li><a href="https://cnftstats.github.io/chilledkongs">ChilledKongs</a></li>
-<li><a href="https://cnftstats.github.io/claynation">Clay Nation</a></li>
-<li><a href="https://cnftstats.github.io/discosolaris">DiscoSolaris</a></li>
-<li><a href="https://cnftstats.github.io/mocossi">Mocossi</a></li>
-<li><a href="https://cnftstats.github.io/pavia">Pavia</a></li>
-<li><a href="https://cnftstats.github.io/spacebudz">SpaceBudz</a></li>
+  <li><a href="https://cnftstats.github.io/adapes">ApeSociety</a></li>
+  <li><a href="https://cnftstats.github.io/bcrc">BCRC</a></li>
+  <li id="currentProject"><a href="https://cnftstats.github.io/bossplanet">BossPlanet</a></li>
+  <li><a href="https://cnftstats.github.io/chilledkongs">ChilledKongs</a></li>
+  <li><a href="https://cnftstats.github.io/claynation">Clay Nation</a></li>
+  <li><a href="https://cnftstats.github.io/discosolaris">DiscoSolaris</a></li>
+  <li><a href="https://cnftstats.github.io/mocossi">Mocossi</a></li>
+  <li><a href="https://cnftstats.github.io/pavia">Pavia</a></li>
+  <li><a href="https://cnftstats.github.io/spacebudz">SpaceBudz</a></li>
+  <li><a href="https://cnftstats.github.io/vox">VoxCats</a></li>
 </ul>
 
 # Floor {data-icon="ion-arrow-graph-up-right"}
