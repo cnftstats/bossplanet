@@ -194,7 +194,7 @@ X <- copy(DT[type != "bundle"])
 X[price %between% c(0, 999),     price_range := trunc(price/100)*100]
 X[price %between% c(1000, 4999), price_range := trunc(price/1000)*1000]
 X[price >= 5000,                 price_range := 5000]
-X <- X[complete.cases(price_range), .(price_range, price, market, district_txt)]
+X <- X[complete.cases(price_range), .(price_range, price, district_txt)]
 CAP <- X[, .(floor = min(price), median = floor(median(price)),
              listings = .N), district_txt][order(district_txt)]
 CAP_all <- X[, .(district_txt = "All", floor = min(price),
@@ -202,23 +202,22 @@ CAP_all <- X[, .(district_txt = "All", floor = min(price),
 CAP <- rbind(CAP_all, CAP)
 .pattern <- "%s: Floor = %d | Median = %d | Listings = %d"
 .caption <- paste0(CAP[, sprintf(.pattern, district_txt, floor, median, listings)], collapse = "\n")
-X <- X[, .N, .(price_range, market, district_txt)][order(price_range)]
+X <- X[, .N, .(price_range, district_txt)][order(price_range)]
 X[price_range %between% c(0, 999),     x_label := paste0(price_range, "-", price_range + (100-1))]
 X[price_range %between% c(1000, 4999), x_label := paste0(price_range, "-", price_range + (1000-1))]
 X[price_range >= 5000,                 x_label := "5000+"]
 .X <- X[, .(price_range, x_label)] %>% unique %>% .[order(price_range)]
 X[, x_label := factor(x_label, levels = .X$x_label)]
-X[, market  := factor(market, levels = c("jpg.store", "cnft.io"))]
-ggplot(X, aes(x_label, N, fill = market)) +
+
+ggplot(X, aes(x_label, N)) +
   facet_wrap(.~district_txt, nrow = 3, ncol = 3) +
-  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity", fill = "steelblue4") +
   geom_text(aes(label = stat(y), group = x_label),
             stat = 'summary', fun = sum, vjust = -.5, hjust = +.55,
             color = "steelblue4", size = 3) +
-  scale_fill_manual(values = c("jpg.store" = "steelblue3", "cnft.io" = "steelblue4")) +
+  scale_y_continuous(expand = expansion(mult = c(0, .1))) +
   scale_alpha_manual(values = 0.9, guide = "none") +
   labs(x = "Price range", y = "Number of listings", fill = "", caption = .caption) +
-  theme_minimal() +
   theme(axis.text.x = element_text(angle = -45, vjust = +.5, hjust = 0,
                                    color = "grey50", size = 8),
         axis.text.y = element_text(color = "grey50", size = 8),
@@ -240,28 +239,27 @@ X <- copy(DTS[type != "bundle" & sold_at_hours <= 24])
 X[price %between% c(0, 999),     price_range := trunc(price/100)*100]
 X[price %between% c(1000, 4999), price_range := trunc(price/1000)*1000]
 X[price >= 5000,                 price_range := 5000]
-X <- X[complete.cases(price_range), .(price_range, price, market, district_txt)]
+X <- X[complete.cases(price_range), .(price_range, price, district_txt)]
 CAP <- X[, .(floor = min(price), roof = max(price), sales = .N), district_txt][order(district_txt)]
 .caption <- paste0(CAP[, sprintf("%s: Sale floor = %s | Sale roof = %d | Sales = %d",
                                  district_txt, floor, roof, sales)],
                    collapse = "\n")
-X <- X[, .N, .(price_range, market, district_txt)][order(price_range)]
+X <- X[, .N, .(price_range, district_txt)][order(price_range)]
 X[price_range %between% c(0, 999),     x_label := paste0(price_range, "-", price_range + (100-1))]
 X[price_range %between% c(1000, 4999), x_label := paste0(price_range, "-", price_range + (1000-1))]
 X[price_range >= 5000,                 x_label := "5000+"]
 .X <- X[, .(price_range, x_label)] %>% unique %>% .[order(price_range)]
 X[, x_label := factor(x_label, levels = .X$x_label)]
-X[, market  := factor(market, levels = c("jpg.store", "cnft.io"))]
-ggplot(X, aes(x_label, N, fill = market)) +
+
+ggplot(X, aes(x_label, N)) +
   facet_wrap(.~district_txt, nrow = 3, ncol = 3) +
-  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity", fill = "springgreen4") +
   geom_text(aes(label = stat(y), group = x_label),
             stat = 'summary', fun = sum, vjust = -.5, hjust = +.55,
             color = "steelblue4", size = 3) +
-  scale_fill_manual(values = c("jpg.store" = "springgreen3", "cnft.io" = "springgreen4")) +
+  scale_y_continuous(expand = expansion(mult = c(0, .1))) +
   scale_alpha_manual(values = 0.9, guide = "none") +
   labs(x = "Price range", y = "Number of sales", fill = "", caption = .caption) +
-  theme_minimal() +
   theme(axis.text.x = element_text(angle = -45, vjust = +.5, hjust = 0,
                                    color = "grey50", size = 8),
         axis.text.y = element_text(color = "grey50", size = 8),
@@ -282,7 +280,7 @@ ggplot(X, aes(x_label, N, fill = market)) +
 ```{r}
 X <- DT[order(price)][1:30]
 X[, asset := sprintf("<a href='%s' target='_blank'>%s</a>", link, asset)]
-X <- X[, .(asset, price, district, market)]
+X <- X[, .(asset, price, district)]
 X <- X[complete.cases(X)]
 datatable(X, class = 'compact stripe hover nowrap',
           options = list(dom = "t",
@@ -292,7 +290,7 @@ datatable(X, class = 'compact stripe hover nowrap',
                          bPaginate = FALSE,
                          info = FALSE,
                          columnDefs = list(list(className = 'dt-right', targets = "_all"))),
-          colnames = c("Asset", "Price", "District", "Market"),
+          colnames = c("Asset", "Price", "District"),
           rownames = FALSE,
           escape = FALSE) %>%
   formatStyle(columns = 1:ncol(X), fontSize = '90%')
